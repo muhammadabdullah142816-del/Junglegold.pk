@@ -251,80 +251,103 @@ export async function createOrder(payload: CreateOrderPayload): Promise<Order> {
   return data as Order;
 }
 
+// ─── Resilience & Timeout Helper ───────────────────────────────────────────
+
+/** Enforce maximum timeout on remote DB queries so user experience never lags or freezes */
+async function withTimeout<T>(fn: () => Promise<T | null>, ms = 2500, fallback: T): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  const timeoutPromise = new Promise<T>((resolve) => {
+    timeoutId = setTimeout(() => {
+      console.warn(`[JungleGold Resilient DB] Remote DB query timed out after ${ms}ms, using instant cached fallback.`);
+      resolve(fallback);
+    }, ms);
+  });
+
+  return Promise.race([
+    fn()
+      .then((res) => {
+        clearTimeout(timeoutId);
+        return res ?? fallback;
+      })
+      .catch(() => fallback),
+    timeoutPromise,
+  ]);
+}
+
 // ─── Public Fetch Functions ──────────────────────────────────────────────────
 
 export async function fetchOrders(): Promise<Order[]> {
   if (isPlaceholderConfig()) {
     return localOrdersStore;
   }
-  try {
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .order("created_at", { ascending: false });
+  return withTimeout(
+    async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (error || !data) return localOrdersStore;
-    return data as Order[];
-  } catch (err: unknown) {
-    console.warn("fetchOrders error, returning local orders:", err);
-    return localOrdersStore;
-  }
+      if (error || !data || data.length === 0) return null;
+      return data as Order[];
+    },
+    3000,
+    localOrdersStore
+  );
 }
 
 export async function fetchProducts(): Promise<Product[]> {
   if (isPlaceholderConfig()) {
     return localProductsStore;
   }
-  try {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .order("created_at", { ascending: false });
+  return withTimeout(
+    async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
 
-    if (error || !data || data.length === 0) {
-      return localProductsStore;
-    }
-    return data as Product[];
-  } catch (err: unknown) {
-    console.warn("fetchProducts error, returning local products:", err);
-    return localProductsStore;
-  }
+      if (error || !data || data.length === 0) return null;
+      return data as Product[];
+    },
+    2500,
+    localProductsStore
+  );
 }
 
 export async function fetchOperators(): Promise<Operator[]> {
   if (isPlaceholderConfig()) {
     return localOperatorsStore;
   }
-  try {
-    const { data, error } = await supabase
-      .from("operators")
-      .select("*")
-      .order("created_at", { ascending: true });
+  return withTimeout(
+    async () => {
+      const { data, error } = await supabase
+        .from("operators")
+        .select("*")
+        .order("created_at", { ascending: true });
 
-    if (error || !data || data.length === 0) {
-      return localOperatorsStore;
-    }
-    return data as Operator[];
-  } catch {
-    return localOperatorsStore;
-  }
+      if (error || !data || data.length === 0) return null;
+      return data as Operator[];
+    },
+    2500,
+    localOperatorsStore
+  );
 }
 
 export async function fetchLegacyMilestones(): Promise<LegacyMilestone[]> {
   if (isPlaceholderConfig()) {
     return localLegacyStore;
   }
-  try {
-    const { data, error } = await supabase
-      .from("legacy_milestones")
-      .select("*")
-      .order("display_order", { ascending: true });
+  return withTimeout(
+    async () => {
+      const { data, error } = await supabase
+        .from("legacy_milestones")
+        .select("*")
+        .order("display_order", { ascending: true });
 
-    if (error || !data || data.length === 0) {
-      return localLegacyStore;
-    }
-    return data as LegacyMilestone[];
-  } catch {
-    return localLegacyStore;
-  }
+      if (error || !data || data.length === 0) return null;
+      return data as LegacyMilestone[];
+    },
+    2500,
+    localLegacyStore
+  );
 }
