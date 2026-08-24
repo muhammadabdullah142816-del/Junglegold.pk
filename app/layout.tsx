@@ -5,10 +5,10 @@ import { CartProvider } from "@/context/CartContext";
 import OrganizationSchema from "@/components/schema/OrganizationSchema";
 import FAQSchema from "@/components/schema/FAQSchema";
 import WebsiteSchema from "@/components/schema/WebsiteSchema";
-import ReviewSchema from "@/components/schema/ReviewSchema";
 import StickyMobileBar from "@/components/StickyMobileBar";
 import HoneyBackground from "@/components/HoneyBackground";
 import IntroSplash from "@/components/IntroSplash";
+
 
 
 const playfair = Playfair_Display({
@@ -155,7 +155,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <OrganizationSchema />
         <FAQSchema />
         <WebsiteSchema />
-        <ReviewSchema />
       </head>
       <body className="pb-28 md:pb-0 bg-forest text-cream min-h-screen relative overflow-x-hidden">
         <IntroSplash />

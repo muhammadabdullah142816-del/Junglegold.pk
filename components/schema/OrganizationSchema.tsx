@@ -1,7 +1,7 @@
 export default function OrganizationSchema() {
   const schema = {
     "@context": "https://schema.org",
-    "@type": ["LocalBusiness", "Organization"],
+    "@type": "LocalBusiness",
     "@id": "https://junglegold.pk/#organization",
     name: "Jungle Gold Raw Honey Pakistan",
     alternateName: ["Jungle Gold", "JungleGold.pk", "جنگل گولڈ شہد"],
