@@ -24,18 +24,29 @@ const SOCIALS = [
   { label: "YouTube", href: "https://youtube.com/@junglegoldofficials", icon: <YoutubeIcon /> },
 ];
 
+const QUICK_LINKS = [
+  { label: "🍯 Shop Honey", href: "/#products" },
+  { label: "🏔️ Our Origins", href: "/#story" },
+  { label: "ℹ️ About Us", href: "/about" },
+  { label: "📜 Our Legacy", href: "/legacy" },
+  { label: "👥 Our Team", href: "/team" },
+  { label: "📞 Contact", href: "/#contact" },
+];
+
 export default function Footer() {
   return (
     <footer id="contact" className="border-t border-gold/10 bg-forest-300 py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 sm:gap-12">
         {/* Brand */}
-        <div>
+        <div className="md:col-span-1">
           <div className="flex items-center gap-3 mb-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/brand-logo.png"
               alt="Jungle Gold Raw Wild Forest Honey Logo"
               className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-contain transition-all duration-300 hover:drop-shadow-[0_0_10px_rgba(212,175,55,0.6)]"
+              width={64}
+              height={64}
             />
             <div>
               <div className="font-serif text-2xl sm:text-3xl font-bold text-gold">Jungle Gold</div>
@@ -46,13 +57,30 @@ export default function Footer() {
             <span className="text-gold">🔬</span> Lab tested from PCSIR
           </p>
           <p className="text-cream/50 text-xs mb-2 leading-relaxed">
-            Backed by the legacy &amp; trust of Razzaq Pansar Store.
+            Backed by the legacy &amp; trust of Razzaq Pansar Store since 1995.
           </p>
           <p className="text-gold/80 text-xs sm:text-sm italic font-serif">خالص شہد — براہ راست جنگل سے</p>
         </div>
 
+        {/* Quick Links */}
+        <nav aria-label="Footer Navigation" className="md:col-span-1">
+          <h3 className="font-serif text-base sm:text-lg font-bold text-cream mb-3 sm:mb-5">Quick Links</h3>
+          <ul className="flex flex-col gap-2.5">
+            {QUICK_LINKS.map((link) => (
+              <li key={link.label}>
+                <Link
+                  href={link.href}
+                  className="text-cream/60 hover:text-gold transition-colors text-xs sm:text-sm py-0.5 inline-block"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
         {/* Contact */}
-        <div>
+        <div className="md:col-span-1">
           <h3 className="font-serif text-base sm:text-lg font-bold text-cream mb-3 sm:mb-5">Get in Touch</h3>
           <div className="flex flex-col gap-3 sm:gap-4">
             <a
@@ -67,6 +95,14 @@ export default function Footer() {
               Gujrat, Punjab, Pakistan
             </div>
             <a
+              href="tel:+923240917740"
+              className="flex items-center gap-3 text-cream/70 hover:text-gold transition-colors text-xs sm:text-sm py-1"
+              aria-label="Call Jungle Gold: 0324-0917740"
+            >
+              <Phone size={16} className="text-gold flex-shrink-0" />
+              Call: 0324-0917740
+            </a>
+            <a
               href="https://wa.me/923240917740"
               target="_blank"
               rel="noopener noreferrer"
@@ -79,7 +115,7 @@ export default function Footer() {
         </div>
 
         {/* Social links */}
-        <div>
+        <div className="md:col-span-1">
           <h3 className="font-serif text-base sm:text-lg font-bold text-cream mb-3 sm:mb-5">Follow Us</h3>
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {SOCIALS.map((s) => (
@@ -88,6 +124,7 @@ export default function Footer() {
                 href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`Jungle Gold on ${s.label}`}
                 className="flex items-center gap-2.5 glass-card p-2.5 sm:p-3 rounded-xl border border-white/5 text-cream/70 hover:text-gold hover:border-gold/30 transition-all text-xs sm:text-sm"
               >
                 <span className="text-gold flex-shrink-0">{s.icon}</span>
@@ -100,11 +137,16 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="max-w-7xl mx-auto mt-10 sm:mt-12 pt-6 border-t border-gold/10 flex flex-col sm:flex-row justify-between items-center gap-3 text-cream/40 text-xs text-center sm:text-left">
-        <p>© {new Date().getFullYear()} Jungle Gold. All rights reserved.</p>
-        <Link href="/admin" className="hover:text-gold transition-colors underline underline-offset-2 py-1">
-          Admin Portal →
-        </Link>
+        <p>© {new Date().getFullYear()} Jungle Gold. All rights reserved. | Gujrat, Punjab, Pakistan</p>
+        <div className="flex items-center gap-4">
+          <Link href="/about" className="hover:text-gold transition-colors py-1">About</Link>
+          <Link href="/legacy" className="hover:text-gold transition-colors py-1">Legacy</Link>
+          <Link href="/admin" className="hover:text-gold transition-colors underline underline-offset-2 py-1">
+            Admin Portal →
+          </Link>
+        </div>
       </div>
     </footer>
   );
 }
+
