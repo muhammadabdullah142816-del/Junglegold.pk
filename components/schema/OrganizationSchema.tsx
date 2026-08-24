@@ -95,36 +95,6 @@ export default function OrganizationSchema() {
       "Razzaq Pansar Store Traditional Wellness",
       "Natural Honey Delivery Pakistan COD",
     ],
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: "Pure Raw Wild Honey Varieties",
-      itemListElement: [
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Product",
-            name: "Wild Jungle Honey — Swat Valley",
-            description: "100% raw, unfiltered honey from wild forest hives in Swat, KPK.",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Product",
-            name: "Pure Sidr (Beri) Honey — Karak",
-            description: "Prized original Sidr honey from Karak district, harvested from wild Jujube trees.",
-          },
-        },
-        {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Product",
-            name: "Kaghan Valley Alpine Honey",
-            description: "High-altitude wildflower honey from glacier-fed meadows in Kaghan Valley.",
-          },
-        },
-      ],
-    },
     makesOffer: {
       "@type": "Offer",
       itemOffered: {
