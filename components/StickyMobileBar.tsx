@@ -33,7 +33,7 @@ export default function StickyMobileBar() {
 
         <button
           onClick={handleOrderClick}
-          className="flex-1 min-h-[44px] bg-gold-gradient text-forest font-bold px-4 py-2.5 rounded-xl shadow-gold-glow flex items-center justify-center gap-2 text-sm hover:scale-[1.02] active:scale-[0.98] transition-all"
+          className="flex-1 min-h-[46px] btn-gold-prominent font-extrabold px-4 py-2.5 rounded-xl shadow-xl flex items-center justify-center gap-2 text-sm cursor-pointer"
         >
           <ShoppingBag size={17} />
           <span>{count > 0 ? `View Cart (${count})` : "Order Now (COD)"}</span>

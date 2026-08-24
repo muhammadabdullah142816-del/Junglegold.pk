@@ -282,11 +282,11 @@ export default function ProductQuickViewModal({ product, onClose }: ProductQuick
                 <button
                   onClick={handleAddToCart}
                   disabled={!currentVariant || !inStock}
-                  className={`w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2.5 text-base transition-all ${
+                  className={`w-full py-4 rounded-xl font-extrabold flex items-center justify-center gap-2.5 text-base transition-all cursor-pointer shadow-xl ${
                     inStock
                       ? added
-                        ? "bg-green-600 text-white"
-                        : "btn-honey-liquid text-forest shadow-lg hover:scale-[1.02]"
+                        ? "bg-green-600 text-white scale-95"
+                        : "btn-gold-prominent hover:scale-[1.02]"
                       : "bg-white/10 text-cream/30 cursor-not-allowed"
                   }`}
                 >

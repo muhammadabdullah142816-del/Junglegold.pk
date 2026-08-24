@@ -177,7 +177,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                   </button>
                   <button
                     onClick={() => setCheckout(true)}
-                    className="w-2/3 min-h-[50px] bg-gold-gradient text-forest font-bold py-3 rounded-xl hover:shadow-gold-glow transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 text-sm sm:text-base"
+                    className="w-2/3 min-h-[50px] btn-gold-prominent font-extrabold py-3.5 rounded-xl shadow-xl flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer"
                   >
                     Proceed to Checkout →
                   </button>

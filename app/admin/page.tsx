@@ -599,7 +599,7 @@ function ProductsTab() {
         <h2 className="font-serif text-xl font-bold text-cream">Product Catalog</h2>
         <div className="flex items-center gap-4">
           <button onClick={loadProducts} className="text-gold/70 hover:text-gold text-sm flex items-center gap-2"><RefreshCw size={14}/> Refresh</button>
-          <button onClick={() => openModal()} className="bg-gold text-forest px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-gold-light transition-all shadow-gold-glow">
+          <button onClick={() => openModal()} className="btn-gold-prominent px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg cursor-pointer">
             <Plus size={16} /> Add Product
           </button>
         </div>
@@ -773,7 +773,7 @@ function ProductsTab() {
 
             <div className="mt-8 pt-6 border-t border-white/10 flex justify-end gap-3">
               <button onClick={() => setIsModalOpen(false)} className="px-5 py-2 text-cream/70 hover:text-cream">Cancel</button>
-              <button onClick={handleSave} disabled={isSaving} className="bg-gold text-forest px-6 py-2 rounded-lg font-bold hover:bg-gold-light transition-all flex items-center gap-2">
+              <button onClick={handleSave} disabled={isSaving} className="btn-gold-prominent px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg cursor-pointer">
                 {isSaving ? <RefreshCw size={18} className="animate-spin" /> : <CheckCircle2 size={18} />}
                 {isSaving ? "Saving..." : "Save Product"}
               </button>
@@ -884,7 +884,7 @@ function OperatorsTab() {
         <h2 className="font-serif text-xl font-bold text-cream">Team & Operators</h2>
         <div className="flex items-center gap-4">
           <button onClick={loadOperators} className="text-gold/70 hover:text-gold text-sm flex items-center gap-2"><RefreshCw size={14}/> Refresh</button>
-          <button onClick={() => openModal()} className="bg-gold text-forest px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-gold-light transition-all shadow-gold-glow">
+          <button onClick={() => openModal()} className="btn-gold-prominent px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg cursor-pointer">
             <Plus size={16} /> Add Member
           </button>
         </div>
@@ -967,7 +967,7 @@ function OperatorsTab() {
 
             <div className="mt-8 pt-6 border-t border-white/10 flex justify-end gap-3">
               <button onClick={() => setIsModalOpen(false)} className="px-5 py-2 text-cream/70 hover:text-cream">Cancel</button>
-              <button onClick={handleSave} disabled={isSaving} className="bg-gold text-forest px-6 py-2 rounded-lg font-bold hover:bg-gold-light transition-all flex items-center gap-2">
+              <button onClick={handleSave} disabled={isSaving} className="btn-gold-prominent px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg cursor-pointer">
                 {isSaving ? <RefreshCw size={18} className="animate-spin" /> : <CheckCircle2 size={18} />}
                 {isSaving ? "Saving..." : "Save Member"}
               </button>
@@ -1096,7 +1096,7 @@ function LegacyTab() {
         </div>
         <div className="flex items-center gap-4">
           <button onClick={refreshMilestones} className="text-gold/70 hover:text-gold text-sm flex items-center gap-2"><RefreshCw size={14}/> Refresh</button>
-          <button onClick={() => openModal()} className="bg-gold text-forest px-4 py-2 rounded-lg font-bold flex items-center gap-2 hover:bg-gold-light transition-all shadow-gold-glow">
+          <button onClick={() => openModal()} className="btn-gold-prominent px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg cursor-pointer">
             <Plus size={16} /> Add Milestone
           </button>
         </div>
@@ -1159,19 +1159,19 @@ function LegacyTab() {
               </div>
               <div>
                 <label className="block text-sm text-cream/70 mb-1">Title *</label>
-                <input value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-cream focus:border-gold outline-none" placeholder="e.g. Founded in the Forests of Swat" />
+                <input value={title} onChange={e => setTitle(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-cream focus:border-gold outline-none" placeholder="e.g. Traditional Swat Harvesting" />
               </div>
               <div>
                 <label className="block text-sm text-cream/70 mb-1">Description</label>
-                <textarea value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-cream focus:border-gold outline-none h-28 resize-none" placeholder="Describe this milestone..." />
+                <textarea value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-cream focus:border-gold outline-none h-24" placeholder="Story details..." />
               </div>
               <div>
-                <label className="block text-sm text-cream/70 mb-2">Image</label>
+                <label className="block text-sm text-cream/70 mb-2">Photo</label>
                 {imageUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={imageUrl} alt="Preview" className="w-full h-40 object-cover rounded-lg mb-3" />
                 )}
-                <label className="flex items-center gap-2 cursor-pointer border border-dashed border-gold/30 rounded-lg p-3 text-cream/50 hover:text-cream hover:border-gold/60 transition-all">
+                <label className="inline-flex items-center gap-2 border border-gold/30 bg-gold/10 hover:bg-gold/20 text-gold px-4 py-2 rounded-lg cursor-pointer transition-colors">
                   {isUploading ? <RefreshCw size={16} className="animate-spin" /> : <ImageIcon size={16} />}
                   <span className="text-sm">{isUploading ? "Uploading..." : "Upload Image"}</span>
                   <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={isUploading} />
@@ -1180,7 +1180,7 @@ function LegacyTab() {
             </div>
             <div className="mt-8 pt-6 border-t border-white/10 flex justify-end gap-3">
               <button onClick={() => setIsModalOpen(false)} className="px-5 py-2 text-cream/70 hover:text-cream">Cancel</button>
-              <button onClick={handleSave} disabled={isSaving} className="bg-gold text-forest px-6 py-2 rounded-lg font-bold hover:bg-gold-light transition-all flex items-center gap-2">
+              <button onClick={handleSave} disabled={isSaving} className="btn-gold-prominent px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg cursor-pointer">
                 {isSaving ? <RefreshCw size={18} className="animate-spin" /> : <CheckCircle2 size={18} />}
                 {isSaving ? "Saving..." : "Save Milestone"}
               </button>

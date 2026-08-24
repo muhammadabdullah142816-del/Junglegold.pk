@@ -219,11 +219,11 @@ export default function ProductGrid() {
                     <button
                       onClick={(e) => handleAdd(e, product.id)}
                       disabled={!variant || !variant.in_stock}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300
+                      className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-extrabold transition-all duration-300 cursor-pointer shadow-lg
                         ${(variant && variant.in_stock)
                           ? justAdded
                             ? "bg-green-600 text-white scale-95"
-                            : "bg-gold text-forest hover:shadow-gold-glow hover:scale-105"
+                            : "btn-gold-prominent hover:scale-105"
                           : "bg-white/5 text-cream/20 cursor-not-allowed"
                         }`}
                     >

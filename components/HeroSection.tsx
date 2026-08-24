@@ -177,7 +177,7 @@ export default function HeroSection() {
         >
           <a
             href="#products"
-            className="w-full sm:w-auto btn-honey-liquid text-forest font-bold px-7 py-3.5 sm:py-4 rounded-full text-base sm:text-lg hover:scale-105 active:scale-95 transition-all text-center"
+            className="w-full sm:w-auto btn-gold-prominent font-extrabold px-8 py-4 rounded-full text-base sm:text-lg hover:scale-105 active:scale-95 transition-all text-center shadow-2xl"
           >
             🍯 Explore Products
           </a>

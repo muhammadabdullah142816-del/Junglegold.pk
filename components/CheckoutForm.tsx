@@ -274,11 +274,10 @@ export default function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
         </div>
       </div>
 
-      {/* Submit Button */}
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gold-gradient text-forest font-bold py-4 rounded-xl hover:shadow-gold-glow transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2 text-base cursor-pointer shadow-lg"
+        className="w-full btn-gold-prominent font-extrabold py-4 rounded-xl shadow-2xl disabled:opacity-60 flex items-center justify-center gap-2 text-base sm:text-lg cursor-pointer"
       >
         {loading ? (
           <>
