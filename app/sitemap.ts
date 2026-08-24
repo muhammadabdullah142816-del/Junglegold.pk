@@ -3,7 +3,13 @@ import { fetchProducts } from "@/lib/api";
 import type { Product } from "@/types/database";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://junglegold.pk";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "https://junglegold-pk-three.vercel.app");
 
   let products: Product[] = [];
   try {
@@ -19,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "weekly" as const,
     priority: 0.8,
     images: product.images?.length
-      ? product.images
+      ? product.images.map((img) => (img.startsWith("http") ? img : `${baseUrl}${img.startsWith("/") ? "" : "/"}${img}`))
       : [`${baseUrl}/products.jpg`],
   }));
 
@@ -61,4 +67,3 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...uniqueProductUrls,
   ];
 }
-

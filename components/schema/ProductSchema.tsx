@@ -4,6 +4,10 @@ import type { Product } from "@/types/database";
 export default function ProductSchema({ products }: { products: Product[] }) {
   if (!products || products.length === 0) return null;
 
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "https://junglegold.pk");
+
   // Compute priceValidUntil (1 year from now) as required by Google Search
   const nextYear = new Date();
   nextYear.setFullYear(nextYear.getFullYear() + 1);
@@ -17,22 +21,25 @@ export default function ProductSchema({ products }: { products: Product[] }) {
       ? Math.max(...product.variants.map((v) => v.price))
       : 4500;
 
-    const images =
-      product.images && product.images.length > 0
-        ? product.images
-        : ["https://junglegold.pk/products.jpg"];
+    // Convert all image URLs to absolute URLs with https://
+    const rawImages = product.images && product.images.length > 0 ? product.images : ["/products.jpg"];
+    const absoluteImages = rawImages.map((img) =>
+      img.startsWith("http") ? img : `${baseUrl}${img.startsWith("/") ? "" : "/"}${img}`
+    );
+
+    const hasInStock = product.variants?.some((v) => v.in_stock) ?? true;
 
     return {
       "@context": "https://schema.org",
       "@type": "Product",
-      "@id": `https://junglegold.pk/#product-${product.id}`,
+      "@id": `${baseUrl}/#product-${product.id}`,
       name: product.title,
-      image: images,
+      image: absoluteImages,
       description:
         product.description ||
         "100% pure raw wild forest honey, unheated, unfiltered and unpasteurized from Swat & Skardu, Pakistan. PCSIR lab certified with free nationwide Cash on Delivery.",
-      sku: `JG-${product.id.substring(0, 8).toUpperCase()}`,
-      mpn: `JUNGLEGOLD-${product.id.substring(0, 6).toUpperCase()}`,
+      sku: `JG-${product.id.replace(/[^a-zA-Z0-9]/g, "").substring(0, 8).toUpperCase()}`,
+      mpn: `JUNGLEGOLD-${product.id.replace(/[^a-zA-Z0-9]/g, "").substring(0, 6).toUpperCase()}`,
       brand: {
         "@type": "Brand",
         name: "Jungle Gold",
@@ -45,22 +52,12 @@ export default function ProductSchema({ products }: { products: Product[] }) {
         highPrice: maxPrice,
         priceValidUntil: priceValidUntil,
         offerCount: product.variants?.length || 1,
-        offers: product.variants?.map((v) => ({
-          "@type": "Offer",
-          name: `${product.title} (${v.size})`,
-          price: v.price,
-          priceCurrency: "PKR",
-          priceValidUntil: priceValidUntil,
-          itemCondition: "https://schema.org/NewCondition",
-          availability: v.in_stock
-            ? "https://schema.org/InStock"
-            : "https://schema.org/OutOfStock",
-          url: "https://junglegold.pk/#products",
-          seller: {
-            "@type": "Organization",
-            name: "Jungle Gold Raw Honey Pakistan",
-          },
-        })),
+        availability: hasInStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        url: `${baseUrl}/#products`,
+        seller: {
+          "@type": "Organization",
+          name: "Jungle Gold Raw Honey Pakistan",
+        },
       },
       aggregateRating: {
         "@type": "AggregateRating",
