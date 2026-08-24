@@ -1,255 +1,301 @@
 "use client";
 import { useState, FormEvent } from "react";
-import { MessageCircle, Loader2, CheckCircle2 } from "lucide-react";
+import { MessageCircle, Loader2, CheckCircle2, Truck, ShieldCheck, ArrowRight, ShoppingBag, Phone } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { createOrder } from "@/lib/api";
-
-type SocialChannel = "whatsapp" | "instagram" | "facebook";
-
-function InstagramIcon({ size = 18, className = "" }: { size?: number; className?: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-    </svg>
-  );
-}
-
-function FacebookIcon({ size = 18, className = "" }: { size?: number; className?: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-    </svg>
-  );
-}
+import type { Order } from "@/types/database";
 
 export default function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
   const { items, total, clear } = useCart();
   const [loading, setLoading] = useState(false);
-  const [channel, setChannel] = useState<SocialChannel>("whatsapp");
-  const [copied, setCopied] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
+
   const [fields, setFields] = useState({
     customer_name: "",
     phone: "",
     city: "",
     address: "",
+    notes: "",
   });
 
   function set(key: string, val: string) {
     setFields((f) => ({ ...f, [key]: val }));
+    setErrorMsg(null);
   }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    
+    setErrorMsg(null);
+
     // Validation
     if (!fields.customer_name.trim() || !fields.city.trim() || !fields.address.trim()) {
-      return alert("Please fill in all required fields.");
+      setErrorMsg("Please fill in your Name, City, and Delivery Address.");
+      return;
     }
+
+    const cleanPhone = fields.phone.replace(/[\s-]/g, "");
     const phoneRegex = /^(03\d{9}|\+923\d{9})$/;
-    if (!phoneRegex.test(fields.phone.replace(/\s/g, ""))) {
-      return alert("Please enter a valid Pakistani phone number (e.g. 03001234567).");
+    if (!phoneRegex.test(cleanPhone)) {
+      setErrorMsg("Please enter a valid Pakistani mobile number (e.g. 03241234567 or +923241234567).");
+      return;
+    }
+
+    if (items.length === 0) {
+      setErrorMsg("Your cart is empty. Please add items to order.");
+      return;
     }
 
     setLoading(true);
 
     try {
-      await createOrder({
-        customer_name: fields.customer_name,
-        phone: fields.phone,
-        city: fields.city,
-        address: fields.address,
+      const order = await createOrder({
+        customer_name: fields.customer_name.trim(),
+        phone: cleanPhone,
+        city: fields.city.trim(),
+        address: fields.notes.trim()
+          ? `${fields.address.trim()} (Note: ${fields.notes.trim()})`
+          : fields.address.trim(),
         items,
         total_amount: total,
       });
+
+      setConfirmedOrder(order);
+      clear();
     } catch (err: unknown) {
-      if (err instanceof Error) console.error(err);
+      console.error("Order submission error:", err);
+      const msg = err instanceof Error ? err.message : "Failed to place order. Please try again.";
+      setErrorMsg(msg);
+    } finally {
+      setLoading(false);
     }
-
-    // Build order summary message
-    const lineItems = items
-      .map((i) => `• ${i.title} (${i.size}) x${i.quantity} — Rs. ${(i.price * i.quantity).toLocaleString()}`)
-      .join("\n");
-
-    const orderText = 
-      `🍯 *New Order — Jungle Gold*\n` +
-      `Customer: ${fields.customer_name}\n` +
-      `Phone: ${fields.phone}\n` +
-      `City: ${fields.city}\n` +
-      `Address: ${fields.address}\n\n` +
-      `*Items:*\n${lineItems}\n\n` +
-      `*Total: Rs. ${total.toLocaleString()}*\n` +
-      `Payment: Cash on Delivery`;
-
-    const encodedMsg = encodeURIComponent(orderText);
-
-    // Channel specific actions
-    const wa = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "923240917740";
-    const ig = process.env.NEXT_PUBLIC_INSTAGRAM_HANDLE || "junglegold.pk";
-    const fb = process.env.NEXT_PUBLIC_FACEBOOK_PAGE || "junglegold.pk";
-
-    let targetUrl = "";
-
-    if (channel === "whatsapp") {
-      targetUrl = `https://api.whatsapp.com/send?phone=${wa}&text=${encodedMsg}`;
-    } else if (channel === "instagram") {
-      try {
-        await navigator.clipboard.writeText(orderText);
-        setCopied(true);
-      } catch {
-        // fallback
-      }
-      targetUrl = `https://ig.me/m/${ig}`;
-    } else if (channel === "facebook") {
-      try {
-        await navigator.clipboard.writeText(orderText);
-        setCopied(true);
-      } catch {
-        // fallback
-      }
-      targetUrl = `https://m.me/${fb}`;
-    }
-
-    setTimeout(() => {
-      window.location.href = targetUrl;
-    }, 150);
-
-    clear();
-    setLoading(false);
-    onSuccess();
   }
 
+  const wa = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "923240917740";
+
+  // ─── Order Success Confirmation Screen ───────────────────────────────────
+  if (confirmedOrder) {
+    const orderNum = confirmedOrder.order_number || confirmedOrder.id;
+    const waText = encodeURIComponent(
+      `Assalam-o-Alaikum Jungle Gold! I just placed Order #${orderNum} on the website.\n` +
+      `Name: ${confirmedOrder.customer_name}\n` +
+      `Total: Rs. ${Number(confirmedOrder.total_amount).toLocaleString()}\n` +
+      `Please let me know when it dispatches.`
+    );
+
+    return (
+      <div className="flex flex-col gap-5 text-center py-4 animate-in fade-in zoom-in-95 duration-300">
+        {/* Success Icon */}
+        <div className="mx-auto w-16 h-16 rounded-full bg-green-500/20 border-2 border-green-500/40 flex items-center justify-center text-green-400 shadow-lg shadow-green-950/50">
+          <CheckCircle2 size={36} />
+        </div>
+
+        <div>
+          <span className="text-xs uppercase tracking-widest text-gold font-bold bg-gold/10 px-3 py-1 rounded-full border border-gold/20">
+            Order #{orderNum} Confirmed
+          </span>
+          <h3 className="font-serif text-2xl sm:text-3xl font-bold text-cream mt-3">
+            Thank You, {confirmedOrder.customer_name}!
+          </h3>
+          <p className="text-cream/70 text-xs sm:text-sm mt-2 max-w-sm mx-auto leading-relaxed">
+            Your Cash on Delivery order has been received. Our dispatch team will contact you at{" "}
+            <span className="text-gold font-semibold">{confirmedOrder.phone}</span> to verify shipment.
+          </p>
+        </div>
+
+        {/* Order Details Card */}
+        <div className="glass-card rounded-2xl p-4 sm:p-5 border border-gold/20 text-left space-y-3">
+          <div className="flex justify-between items-center text-xs text-cream/60 border-b border-white/10 pb-2">
+            <span>Delivery To:</span>
+            <span className="font-semibold text-cream">{confirmedOrder.city}</span>
+          </div>
+          <p className="text-xs text-cream/80 line-clamp-2">{confirmedOrder.address}</p>
+
+          <div className="border-t border-white/10 pt-2 space-y-1.5">
+            {confirmedOrder.items?.map((item, idx) => (
+              <div key={idx} className="flex justify-between text-xs text-cream/75">
+                <span>{item.quantity}x {item.title} ({item.size})</span>
+                <span className="text-gold font-medium">Rs. {(item.price * item.quantity).toLocaleString()}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="border-t border-gold/20 pt-2 flex justify-between items-center">
+            <span className="text-xs font-bold text-cream">Total Payable (COD):</span>
+            <span className="font-serif text-lg font-bold text-gold">
+              Rs. {Number(confirmedOrder.total_amount).toLocaleString()}
+            </span>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col gap-2.5 pt-2">
+          <a
+            href={`https://api.whatsapp.com/send?phone=${wa}&text=${waText}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white font-bold py-3.5 px-4 rounded-xl text-xs sm:text-sm transition-all hover:scale-[1.02] shadow-md shadow-green-950/40"
+          >
+            <MessageCircle size={18} />
+            <span>Chat on WhatsApp (Optional)</span>
+          </a>
+
+          <button
+            onClick={onSuccess}
+            className="w-full border border-gold/30 hover:border-gold/60 text-cream/80 hover:text-cream font-semibold py-3 rounded-xl transition-all text-xs sm:text-sm"
+          >
+            Continue Browsing
+          </button>
+        </div>
+
+        <div className="flex items-center justify-center gap-4 text-[11px] text-cream/50 pt-2">
+          <span className="flex items-center gap-1"><Truck size={13} className="text-gold" /> 2-4 Days Delivery</span>
+          <span className="flex items-center gap-1"><ShieldCheck size={13} className="text-gold" /> 100% Pure Guarantee</span>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Direct Checkout Form ────────────────────────────────────────────────
   const inputCls =
-    "w-full bg-white/5 border border-gold/20 rounded-xl px-4 py-3 text-cream placeholder:text-cream/35 text-base sm:text-sm focus:outline-none focus:border-gold/60 transition-colors";
+    "w-full bg-white/5 border border-gold/20 rounded-xl px-4 py-3 text-cream placeholder:text-cream/35 text-sm focus:outline-none focus:border-gold/70 focus:bg-white/10 transition-all";
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 sm:gap-4">
-      <h3 className="font-serif text-lg font-bold text-cream">Delivery Details</h3>
-      
-      <input 
-        required 
-        placeholder="Full Name" 
-        value={fields.customer_name} 
-        onChange={(e) => set("customer_name", e.target.value)} 
-        className={inputCls} 
-      />
-      <input 
-        required 
-        type="tel" 
-        placeholder="Phone Number (e.g. 03001234567)" 
-        value={fields.phone} 
-        onChange={(e) => set("phone", e.target.value)} 
-        className={inputCls} 
-      />
-      <input 
-        required 
-        placeholder="City" 
-        value={fields.city} 
-        onChange={(e) => set("city", e.target.value)} 
-        className={inputCls} 
-      />
-      <textarea 
-        required 
-        rows={3} 
-        placeholder="Full Delivery Address" 
-        value={fields.address} 
-        onChange={(e) => set("address", e.target.value)} 
-        className={inputCls + " resize-none"} 
-      />
-
-      {/* Select Channel */}
-      <div>
-        <label className="text-cream/70 text-xs font-semibold uppercase tracking-wider block mb-2">
-          Select Order Channel
-        </label>
-        <div className="grid grid-cols-3 gap-2">
-          <button
-            type="button"
-            onClick={() => setChannel("whatsapp")}
-            className={`flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-xl border text-xs font-bold transition-all ${
-              channel === "whatsapp"
-                ? "bg-green-600/30 border-green-500 text-green-400 shadow-lg shadow-green-900/30"
-                : "bg-white/5 border-gold/10 text-cream/60 hover:border-gold/30"
-            }`}
-          >
-            <MessageCircle size={18} className="mb-1 text-green-400" />
-            WhatsApp
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setChannel("instagram")}
-            className={`flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-xl border text-xs font-bold transition-all ${
-              channel === "instagram"
-                ? "bg-pink-600/30 border-pink-500 text-pink-400 shadow-lg shadow-pink-900/30"
-                : "bg-white/5 border-gold/10 text-cream/60 hover:border-gold/30"
-            }`}
-          >
-            <InstagramIcon size={18} className="mb-1 text-pink-400" />
-            Instagram
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setChannel("facebook")}
-            className={`flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-xl border text-xs font-bold transition-all ${
-              channel === "facebook"
-                ? "bg-blue-600/30 border-blue-500 text-blue-400 shadow-lg shadow-blue-900/30"
-                : "bg-white/5 border-gold/10 text-cream/60 hover:border-gold/30"
-            }`}
-          >
-            <FacebookIcon size={18} className="mb-1 text-blue-400" />
-            Messenger
-          </button>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3.5 sm:gap-4 animate-in fade-in duration-200">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-serif text-lg font-bold text-cream">Customer & Delivery Info</h3>
+          <p className="text-cream/50 text-xs">Fill in your address for direct home delivery.</p>
         </div>
+        <span className="flex items-center gap-1 text-[11px] bg-gold/15 text-gold px-2.5 py-1 rounded-full font-bold border border-gold/30">
+          <Truck size={12} /> Cash on Delivery
+        </span>
       </div>
 
-      <div className="p-4 glass-card rounded-xl border border-gold/10">
-        <div className="flex justify-between items-center">
-          <div>
-            <p className="text-cream/60 text-xs">Order Total</p>
-            <p className="font-serif text-2xl font-bold text-gold">Rs. {total.toLocaleString()}</p>
-          </div>
-          <span className="text-xs bg-gold/20 text-gold px-3 py-1 rounded-full font-semibold">
-            Cash on Delivery
-          </span>
-        </div>
-      </div>
-
-      {copied && (
-        <div className="flex items-center gap-2 p-3 bg-gold/10 border border-gold/30 rounded-xl text-gold text-xs">
-          <CheckCircle2 size={16} />
-          Order details copied to clipboard! Paste them in DM.
+      {errorMsg && (
+        <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs font-medium">
+          ⚠️ {errorMsg}
         </div>
       )}
 
+      {/* Full Name */}
+      <div>
+        <label className="text-cream/70 text-xs font-semibold block mb-1">
+          Full Name <span className="text-gold">*</span>
+        </label>
+        <input
+          required
+          type="text"
+          placeholder="e.g. Muhammad Abdullah"
+          value={fields.customer_name}
+          onChange={(e) => set("customer_name", e.target.value)}
+          className={inputCls}
+        />
+      </div>
+
+      {/* Mobile Number */}
+      <div>
+        <label className="text-cream/70 text-xs font-semibold block mb-1">
+          Mobile / WhatsApp Number <span className="text-gold">*</span>
+        </label>
+        <div className="relative">
+          <input
+            required
+            type="tel"
+            placeholder="03XXXXXXXXX"
+            value={fields.phone}
+            onChange={(e) => set("phone", e.target.value)}
+            className={inputCls + " pl-10"}
+          />
+          <Phone size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-cream/40" />
+        </div>
+        <p className="text-cream/40 text-[10px] mt-1">Our team will call / WhatsApp to confirm delivery.</p>
+      </div>
+
+      {/* City */}
+      <div>
+        <label className="text-cream/70 text-xs font-semibold block mb-1">
+          City <span className="text-gold">*</span>
+        </label>
+        <input
+          required
+          type="text"
+          placeholder="e.g. Lahore, Karachi, Islamabad, Gujrat..."
+          value={fields.city}
+          onChange={(e) => set("city", e.target.value)}
+          className={inputCls}
+        />
+      </div>
+
+      {/* Delivery Address */}
+      <div>
+        <label className="text-cream/70 text-xs font-semibold block mb-1">
+          Complete Delivery Address <span className="text-gold">*</span>
+        </label>
+        <textarea
+          required
+          rows={2}
+          placeholder="House #, Street #, Sector / Area / Landmark"
+          value={fields.address}
+          onChange={(e) => set("address", e.target.value)}
+          className={inputCls + " resize-none"}
+        />
+      </div>
+
+      {/* Optional Note */}
+      <div>
+        <label className="text-cream/50 text-[11px] block mb-1">
+          Delivery Notes / Instructions (Optional)
+        </label>
+        <input
+          type="text"
+          placeholder="e.g. Call before delivery, deliver after 2 PM"
+          value={fields.notes}
+          onChange={(e) => set("notes", e.target.value)}
+          className={inputCls}
+        />
+      </div>
+
+      {/* Payment & Total Summary */}
+      <div className="p-3.5 sm:p-4 glass-card rounded-xl border border-gold/20 space-y-2">
+        <div className="flex justify-between items-center text-xs text-cream/70">
+          <span>Payment Method</span>
+          <span className="font-semibold text-green-400 flex items-center gap-1">
+            <Truck size={13} /> Cash on Delivery (COD)
+          </span>
+        </div>
+        <div className="flex justify-between items-center text-xs text-cream/70">
+          <span>Delivery Charges</span>
+          <span className="font-semibold text-gold">FREE Nationwide</span>
+        </div>
+        <div className="border-t border-white/10 pt-2 flex justify-between items-center">
+          <span className="text-sm font-bold text-cream">Grand Total</span>
+          <span className="font-serif text-2xl font-bold text-gold">Rs. {total.toLocaleString()}</span>
+        </div>
+      </div>
+
+      {/* Submit Button */}
       <button
         type="submit"
         disabled={loading}
-        className={`flex items-center justify-center gap-2 font-bold py-4 rounded-xl transition-all hover:scale-[1.02] disabled:opacity-60 text-white ${
-          channel === "whatsapp"
-            ? "bg-green-600 hover:bg-green-500 shadow-lg shadow-green-900/40"
-            : channel === "instagram"
-            ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:opacity-90 shadow-lg shadow-pink-900/40"
-            : "bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-900/40"
-        }`}
+        className="w-full bg-gold-gradient text-forest font-bold py-4 rounded-xl hover:shadow-gold-glow transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 flex items-center justify-center gap-2 text-base cursor-pointer shadow-lg"
       >
         {loading ? (
-          <Loader2 size={18} className="animate-spin" />
-        ) : channel === "whatsapp" ? (
-          <MessageCircle size={18} />
-        ) : channel === "instagram" ? (
-          <InstagramIcon size={18} />
+          <>
+            <Loader2 size={18} className="animate-spin" /> Placing Order...
+          </>
         ) : (
-          <FacebookIcon size={18} />
+          <>
+            <span>Confirm &amp; Place Order (COD)</span>
+            <ArrowRight size={18} />
+          </>
         )}
-        Confirm via {channel === "whatsapp" ? "WhatsApp" : channel === "instagram" ? "Instagram DM" : "Facebook Messenger"}
       </button>
 
-      <p className="text-cream/40 text-xs text-center">
-        ⚡ Instant automated routing. Your order will be confirmed directly in chat.
-      </p>
+      <div className="flex items-center justify-center gap-4 text-[11px] text-cream/40 pt-1">
+        <span className="flex items-center gap-1"><ShieldCheck size={13} className="text-gold" /> PCSIR Certified</span>
+        <span className="flex items-center gap-1"><ShoppingBag size={13} className="text-gold" /> Rs. 50,000 Purity Guarantee</span>
+      </div>
     </form>
   );
 }

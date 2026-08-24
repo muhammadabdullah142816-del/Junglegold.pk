@@ -32,7 +32,7 @@ export default function HeroSection() {
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
-          src="/jpegmini_optimized/IMG_0690.jpg"
+          src="/hero-jar.jpg"
           alt="Jungle Gold wild honey jar in nature"
           fill
           className="object-cover opacity-35"

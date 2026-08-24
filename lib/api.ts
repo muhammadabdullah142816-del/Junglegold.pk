@@ -40,7 +40,7 @@ const MOCK_PRODUCTS: Product[] = [
     id: "prod-sidr-01",
     title: "Raw Wild Sidr (Beri) Honey",
     description: "100% pure, unheated, unfiltered raw wild Sidr honey harvested from wild berries in Swat Valley & Karak.",
-    images: ["/jpegmini_optimized/IMG_0677.jpg", "/jpegmini_optimized/IMG_0682.jpg", "/jpegmini_optimized/IMG_0645.jpg"],
+    images: ["/hero-jar.jpg", "/products.jpg", "/harvest.jpg"],
     variants: [
       { id: "var-100", size: "125g", price: 1200, in_stock: true },
       { id: "var-200", size: "250g", price: 2200, in_stock: true },
@@ -52,7 +52,7 @@ const MOCK_PRODUCTS: Product[] = [
     id: "prod-multi-02",
     title: "Wild Forest Multi-Flower Honey",
     description: "Harvested from untouched high-altitude forest blossoms in Margalla Hills & Skardu. Rich in live bee pollen.",
-    images: ["/jpegmini_optimized/IMG_0695.jpg", "/jpegmini_optimized/IMG_0720.jpg", "/jpegmini_optimized/IMG_0655.jpg"],
+    images: ["/products.jpg", "/harvest.jpg", "/crystallization.jpg"],
     variants: [
       { id: "var-m100", size: "125g", price: 1000, in_stock: true },
       { id: "var-m200", size: "250g", price: 1800, in_stock: true },
@@ -68,7 +68,7 @@ const MOCK_OPERATORS: Operator[] = [
     name: "Master Beekeeper Tariq",
     role: "Head Harvester & Apiary Master",
     description: "30+ years of traditional wild honey harvesting in Swat & Karak valleys.",
-    image_url: "/jpegmini_optimized/IMG_0682.jpg",
+    image_url: "/harvest.jpg",
     created_at: new Date().toISOString(),
   },
   {
@@ -76,7 +76,7 @@ const MOCK_OPERATORS: Operator[] = [
     name: "Dr. Salman Riaz",
     role: "Quality & Purity Director",
     description: "Ensures every batch meets international lab standards for zero-adulteration purity.",
-    image_url: "/jpegmini_optimized/IMG_0645.jpg",
+    image_url: "/hero-jar.jpg",
     created_at: new Date().toISOString(),
   },
 ];
@@ -87,7 +87,7 @@ const MOCK_LEGACY: LegacyMilestone[] = [
     year_or_date: "1995",
     title: "First Wild Harvest in Swat",
     description: "Our family started harvesting unrefined wild Sidr honey using traditional sustainable climbing techniques.",
-    image_url: "/jpegmini_optimized/IMG_0695.jpg",
+    image_url: "/harvest.jpg",
     display_order: 1,
     created_at: new Date().toISOString(),
   },
@@ -96,7 +96,7 @@ const MOCK_LEGACY: LegacyMilestone[] = [
     year_or_date: "2020",
     title: "Jungle Gold Brand Launch",
     description: "Transitioned from local supply to direct-to-consumer premium organic honey brand across Pakistan.",
-    image_url: "/jpegmini_optimized/IMG_0720.jpg",
+    image_url: "/products.jpg",
     display_order: 2,
     created_at: new Date().toISOString(),
   },

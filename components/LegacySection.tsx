@@ -83,6 +83,12 @@ export default function LegacySection() {
                           alt={milestone.title}
                           loading="lazy"
                           className="w-full h-48 sm:h-64 object-cover rounded-2xl border border-gold/20 shadow-lg hover:scale-[1.02] transition-transform duration-300"
+                          onError={(e) => {
+                            const target = e.currentTarget;
+                            if (target.src !== "/harvest.jpg") {
+                              target.src = "/harvest.jpg";
+                            }
+                          }}
                         />
                       ) : (
                         <div className="w-full h-48 sm:h-64 rounded-2xl bg-white/5 border border-gold/10 flex items-center justify-center">

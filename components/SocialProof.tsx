@@ -30,12 +30,12 @@ const TRUST_BADGES = [
 ];
 
 const IG_POSTS = [
-  "/jpegmini_optimized/IMG_0645.jpg",
-  "/jpegmini_optimized/IMG_0682.jpg",
-  "/jpegmini_optimized/IMG_0655.jpg",
-  "/jpegmini_optimized/IMG_0695.jpg",
-  "/jpegmini_optimized/IMG_0677.jpg",
-  "/jpegmini_optimized/IMG_0720.jpg",
+  "/harvest.jpg",
+  "/hero-jar.jpg",
+  "/products.jpg",
+  "/crystallization.jpg",
+  "/brand-logo.jpg",
+  "/harvest.jpg",
 ];
 
 export default function SocialProof() {
@@ -140,7 +140,17 @@ export default function SocialProof() {
               className="relative aspect-square overflow-hidden rounded-xl group cursor-pointer border border-white/5"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt="Jungle Gold Instagram post" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+              <img
+                src={src}
+                alt="Jungle Gold Instagram post"
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src !== "/harvest.jpg") {
+                    target.src = "/harvest.jpg";
+                  }
+                }}
+              />
               <div className="absolute inset-0 bg-gold/0 group-hover:bg-gold/20 transition-colors duration-300" />
             </motion.a>
           ))}

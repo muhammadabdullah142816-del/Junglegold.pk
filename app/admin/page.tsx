@@ -22,7 +22,8 @@ import type { Order, Product, OrderStatus, ProductVariant, Operator, LegacyMiles
 import {
   Package, ShoppingBag, LogOut, RefreshCw,
   TrendingUp, Clock, CheckCircle2,
-  Search, XCircle, Plus, Image as ImageIcon, Trash2, Edit2, Users, BookOpen
+  Search, XCircle, Plus, Image as ImageIcon, Trash2, Edit2, Users, BookOpen,
+  MessageCircle, Phone, Copy, Check
 } from "lucide-react";
 
 /** Compress image on client canvas before uploading to prevent payload size errors */
@@ -258,6 +259,54 @@ function OrdersTab() {
     return { totalOrders, pendingOrders, revenue };
   }, [orders]);
 
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  function getWhatsAppUrl(order: Order) {
+    const rawPhone = order.phone.replace(/[\s-]/g, "");
+    const formattedPhone = rawPhone.startsWith("03")
+      ? "92" + rawPhone.slice(1)
+      : rawPhone.startsWith("+")
+      ? rawPhone.slice(1)
+      : rawPhone;
+
+    const itemSummary = (order.items || [])
+      .map((i) => `• ${i.quantity}x ${i.title} (${i.size})`)
+      .join("\n");
+
+    const message =
+      `Assalam-o-Alaikum ${order.customer_name}! 🍯\n` +
+      `This is Jungle Gold regarding your Cash on Delivery Order #${order.order_number || order.id}.\n\n` +
+      `📦 *Items:*\n${itemSummary}\n\n` +
+      `💰 *Total Amount:* Rs. ${Number(order.total_amount).toLocaleString()}\n` +
+      `📍 *Delivery Address:* ${order.address}, ${order.city}\n\n` +
+      `Your pure raw honey parcel is being prepared for dispatch. Please confirm if this delivery address is correct. JazakAllah!`;
+
+    return `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(message)}`;
+  }
+
+  async function copyOrderDetails(order: Order) {
+    const itemSummary = (order.items || [])
+      .map((i) => `${i.quantity}x ${i.title} (${i.size}) - Rs. ${i.price * i.quantity}`)
+      .join(", ");
+
+    const text =
+      `Order #${order.order_number || order.id}\n` +
+      `Name: ${order.customer_name}\n` +
+      `Phone: ${order.phone}\n` +
+      `City: ${order.city}\n` +
+      `Address: ${order.address}\n` +
+      `Items: ${itemSummary}\n` +
+      `COD Amount: Rs. ${Number(order.total_amount).toLocaleString()}`;
+
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(order.id || "copied");
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      // Fallback
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* KPI Cards */}
@@ -314,36 +363,39 @@ function OrdersTab() {
               <tr className="border-b border-white/10 text-cream/40 text-left bg-white/5">
                 <th className="px-5 py-4 font-medium">Order #</th>
                 <th className="px-5 py-4 font-medium">Date</th>
-                <th className="px-5 py-4 font-medium">Customer</th>
+                <th className="px-5 py-4 font-medium">Customer &amp; Address</th>
                 <th className="px-5 py-4 font-medium">Items</th>
                 <th className="px-5 py-4 font-medium">Total</th>
                 <th className="px-5 py-4 font-medium">Status</th>
+                <th className="px-5 py-4 font-medium text-center">Connect &amp; Dispatch</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
               {loading ? (
-                <tr><td colSpan={6} className="text-center py-10 text-cream/40">Loading orders...</td></tr>
+                <tr><td colSpan={7} className="text-center py-10 text-cream/40">Loading orders...</td></tr>
               ) : fetchError ? (
-                <tr><td colSpan={6} className="text-center py-10 text-red-400">Error fetching orders: {fetchError}</td></tr>
+                <tr><td colSpan={7} className="text-center py-10 text-red-400">Error fetching orders: {fetchError}</td></tr>
               ) : filteredOrders.length === 0 ? (
-                <tr><td colSpan={6} className="text-center py-10 text-cream/40">No orders found.</td></tr>
+                <tr><td colSpan={7} className="text-center py-10 text-cream/40">No orders found.</td></tr>
               ) : (
                 filteredOrders.map((order) => (
                   <tr key={order.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="px-5 py-4 font-mono text-gold/80">#{order.order_number}</td>
+                    <td className="px-5 py-4 font-mono text-gold/80">#{order.order_number || order.id}</td>
                     <td className="px-5 py-4 text-cream/60 whitespace-nowrap">
                       {new Date(order.created_at!).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })}
                     </td>
                     <td className="px-5 py-4">
                       <div className="font-medium text-cream">{order.customer_name}</div>
-                      <div className="text-cream/40 text-xs mt-1">{order.phone}</div>
-                      <div className="text-cream/30 text-xs truncate max-w-[150px]">{order.city} - {order.address}</div>
+                      <div className="text-gold/90 text-xs font-mono mt-0.5">{order.phone}</div>
+                      <div className="text-cream/40 text-xs mt-1 max-w-[220px] leading-relaxed">
+                        <span className="text-cream/70 font-semibold">{order.city}</span> — {order.address}
+                      </div>
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex flex-col gap-1">
                         {order.items.map((item, i) => (
                           <div key={i} className="text-xs text-cream/70 whitespace-nowrap">
-                            {item.quantity}x {item.size} <span className="text-cream/30">({item.price})</span>
+                            {item.quantity}x {item.title} <span className="text-gold/70 font-mono">({item.size})</span>
                           </div>
                         ))}
                       </div>
@@ -355,7 +407,7 @@ function OrdersTab() {
                       <select
                         value={order.status}
                         onChange={(e) => updateStatus(order.id!, e.target.value)}
-                        className={`text-xs font-semibold px-2 py-1 rounded-md border appearance-none focus:outline-none cursor-pointer ${STATUS_STYLES[order.status] || STATUS_STYLES.Pending}`}
+                        className={`text-xs font-semibold px-2.5 py-1.5 rounded-lg border appearance-none focus:outline-none cursor-pointer ${STATUS_STYLES[order.status] || STATUS_STYLES.Pending}`}
                       >
                         <option value="Pending" className="bg-forest text-cream">Pending</option>
                         <option value="Processing" className="bg-forest text-cream">Processing</option>
@@ -363,6 +415,39 @@ function OrdersTab() {
                         <option value="Delivered" className="bg-forest text-cream">Delivered</option>
                         <option value="Cancelled" className="bg-forest text-cream">Cancelled</option>
                       </select>
+                    </td>
+                    <td className="px-5 py-4">
+                      <div className="flex items-center justify-center gap-1.5">
+                        {/* WhatsApp Customer */}
+                        <a
+                          href={getWhatsAppUrl(order)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 bg-green-600/20 hover:bg-green-600 text-green-400 hover:text-white border border-green-500/30 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm"
+                          title="Message customer on WhatsApp with order confirmation"
+                        >
+                          <MessageCircle size={14} />
+                          <span>WhatsApp</span>
+                        </a>
+
+                        {/* Direct Call */}
+                        <a
+                          href={`tel:${order.phone}`}
+                          className="p-1.5 bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/30 rounded-lg transition-all"
+                          title="Call customer"
+                        >
+                          <Phone size={14} />
+                        </a>
+
+                        {/* Copy Address & Courier Info */}
+                        <button
+                          onClick={() => copyOrderDetails(order)}
+                          className="p-1.5 bg-white/5 hover:bg-gold/20 text-cream/60 hover:text-gold border border-white/10 hover:border-gold/40 rounded-lg transition-all cursor-pointer"
+                          title="Copy customer details for courier booking"
+                        >
+                          {copiedId === order.id ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

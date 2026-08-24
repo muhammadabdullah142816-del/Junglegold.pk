@@ -124,7 +124,17 @@ export default function ProductGrid() {
                 {/* Image Gallery */}
                 <div className="relative h-64 overflow-hidden bg-black/20 group">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={images[imgIdx]} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img
+                    src={images[imgIdx]}
+                    alt={product.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (target.src !== "/products.jpg") {
+                        target.src = "/products.jpg";
+                      }
+                    }}
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-forest via-transparent to-transparent opacity-80" />
                   
                   {/* View Details Hover/Tap Badge */}

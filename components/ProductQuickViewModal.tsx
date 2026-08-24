@@ -110,6 +110,12 @@ export default function ProductQuickViewModal({ product, onClose }: ProductQuick
                   src={images[activeImgIdx]}
                   alt={product.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== "/products.jpg") {
+                      target.src = "/products.jpg";
+                    }
+                  }}
                 />
                 
                 {/* Stock Badge */}
@@ -157,7 +163,17 @@ export default function ProductQuickViewModal({ product, onClose }: ProductQuick
                       }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img} alt="thumbnail" className="w-full h-full object-cover" />
+                      <img
+                        src={img}
+                        alt="thumbnail"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (target.src !== "/products.jpg") {
+                            target.src = "/products.jpg";
+                          }
+                        }}
+                      />
                     </button>
                   ))}
                 </div>

@@ -66,6 +66,12 @@ export default function TeamPage() {
                         src={op.image_url}
                         alt={op.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          if (target.src !== "/harvest.jpg") {
+                            target.src = "/harvest.jpg";
+                          }
+                        }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
