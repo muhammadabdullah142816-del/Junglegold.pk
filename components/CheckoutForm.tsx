@@ -277,7 +277,7 @@ export default function CheckoutForm({ onSuccess }: { onSuccess: () => void }) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full btn-gold-prominent font-extrabold py-4 rounded-xl shadow-2xl disabled:opacity-60 flex items-center justify-center gap-2 text-base sm:text-lg cursor-pointer"
+        className="w-full bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:via-yellow-300 hover:to-amber-400 text-stone-950 font-black py-4 rounded-xl shadow-xl shadow-amber-500/40 border border-yellow-200/80 disabled:opacity-60 flex items-center justify-center gap-2 text-base sm:text-lg cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
       >
         {loading ? (
           <>

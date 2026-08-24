@@ -219,11 +219,11 @@ export default function ProductGrid() {
                     <button
                       onClick={(e) => handleAdd(e, product.id)}
                       disabled={!variant || !variant.in_stock}
-                      className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-extrabold transition-all duration-300 cursor-pointer shadow-lg
+                      className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-black transition-all duration-300 cursor-pointer shadow-lg
                         ${(variant && variant.in_stock)
                           ? justAdded
                             ? "bg-green-600 text-white scale-95"
-                            : "btn-gold-prominent hover:scale-105"
+                            : "bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:via-yellow-300 hover:to-amber-400 text-stone-950 shadow-amber-500/30 border border-yellow-200/80 hover:scale-105"
                           : "bg-white/5 text-cream/20 cursor-not-allowed"
                         }`}
                     >

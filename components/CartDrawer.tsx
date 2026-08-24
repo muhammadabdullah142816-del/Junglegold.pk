@@ -25,7 +25,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm"
           />
 
           {/* Drawer */}
@@ -35,10 +35,10 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md h-full h-[100dvh] glass-card-dark border-l border-gold/20 flex flex-col shadow-2xl"
+            className="fixed top-0 right-0 bottom-0 z-[101] w-full max-w-md h-[100dvh] max-h-[100dvh] bg-forest-300 border-l border-gold/20 flex flex-col shadow-2xl overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-gold/10">
+            <div className="flex-shrink-0 flex items-center justify-between p-4 sm:p-5 border-b border-gold/15 bg-forest-400/80">
               <div>
                 <h2 className="font-serif text-xl font-bold text-cream">
                   {checkout ? "Checkout" : "Your Cart"}
@@ -56,7 +56,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                 )}
                 <button
                   onClick={handleClose}
-                  className="min-w-[48px] min-h-[48px] p-2 flex items-center justify-center text-cream/60 hover:text-gold transition-colors rounded-lg"
+                  className="min-w-[44px] min-h-[44px] p-2 flex items-center justify-center text-cream/60 hover:text-gold transition-colors rounded-lg"
                   aria-label="Close cart drawer"
                 >
                   <X size={22} />
@@ -71,32 +71,32 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
             </div>
 
             {/* Body */}
-            <div className="flex-1 overflow-y-auto p-5">
+            <div className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-5 overscroll-contain">
               {checkout ? (
-                <div>
+                <div className="pb-8">
                   <button
                     onClick={() => setCheckout(false)}
-                    className="mb-4 text-xs font-semibold text-gold/80 hover:text-gold flex items-center gap-1.5 transition-colors"
+                    className="mb-4 text-xs font-bold text-gold hover:text-honey flex items-center gap-1.5 transition-colors p-1 rounded hover:bg-white/5 cursor-pointer"
                   >
                     ← Back to Cart
                   </button>
                   <CheckoutForm onSuccess={handleClose} />
                 </div>
               ) : items.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
+                <div className="flex flex-col items-center justify-center h-full gap-4 text-center py-12">
                   <ShoppingBag size={48} className="text-cream/20" />
                   <p className="text-cream/40">Your cart is empty.</p>
                   <button
                     onClick={handleClose}
-                    className="min-h-[48px] text-gold text-sm underline underline-offset-2 font-medium px-4 py-2"
+                    className="min-h-[48px] text-gold text-sm underline underline-offset-2 font-medium px-4 py-2 cursor-pointer"
                   >
                     Continue Shopping
                   </button>
                 </div>
               ) : (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3.5">
                   {items.map((item) => (
-                    <div key={item.id + item.size} className="relative flex gap-3 p-3 glass-card rounded-xl group">
+                    <div key={item.id + item.size} className="relative flex gap-3 p-3 glass-card rounded-xl group border border-gold/15">
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-black/20">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -113,9 +113,9 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                       </div>
                       <div className="flex-1 min-w-0 pr-6">
                         <p className="font-serif text-sm font-bold text-cream truncate">{item.title}</p>
-                        <p className="text-cream/40 text-xs mb-2">{item.size}</p>
+                        <p className="text-cream/40 text-xs mb-1.5 font-medium">{item.size}</p>
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5">
                             <button
                               onClick={() => {
                                 if (item.quantity <= 1) {
@@ -124,18 +124,18 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                                   setQty(item.id, item.size, item.quantity - 1);
                                 }
                               }}
-                              className="min-w-[36px] min-h-[36px] flex items-center justify-center rounded-md text-cream/60 hover:text-gold hover:bg-white/10 transition-all border border-white/10"
+                              className="w-7 h-7 flex items-center justify-center rounded-md text-cream/70 hover:text-gold hover:bg-white/10 transition-all border border-white/10"
                               aria-label="Decrease quantity"
                             >
-                              <Minus size={14} />
+                              <Minus size={13} />
                             </button>
-                            <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>
+                            <span className="text-sm font-bold w-6 text-center text-cream">{item.quantity}</span>
                             <button
                               onClick={() => setQty(item.id, item.size, item.quantity + 1)}
-                              className="min-w-[36px] min-h-[36px] flex items-center justify-center rounded-md text-cream/60 hover:text-gold hover:bg-white/10 transition-all border border-white/10"
+                              className="w-7 h-7 flex items-center justify-center rounded-md text-cream/70 hover:text-gold hover:bg-white/10 transition-all border border-white/10"
                               aria-label="Increase quantity"
                             >
-                              <Plus size={14} />
+                              <Plus size={13} />
                             </button>
                           </div>
                           <span className="text-gold font-bold text-sm">
@@ -143,10 +143,10 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                           </span>
                         </div>
                       </div>
-                      {/* Cancel / Remove Single Item Button */}
+                      {/* Remove item button */}
                       <button
                         onClick={() => remove(item.id, item.size)}
-                        className="absolute top-2.5 right-2.5 p-1 rounded-full text-cream/30 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                        className="absolute top-2.5 right-2.5 p-1 rounded-full text-cream/30 hover:text-red-400 hover:bg-red-500/10 transition-all cursor-pointer"
                         aria-label={`Remove ${item.title} (${item.size}) from cart`}
                         title="Remove item"
                       >
@@ -158,28 +158,27 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
               )}
             </div>
 
-            {/* Footer */}
+            {/* Sticky Fixed Bottom Footer */}
             {!checkout && items.length > 0 && (
-              <div className="p-5 border-t border-gold/10 space-y-4">
+              <div className="flex-shrink-0 p-4 sm:p-5 border-t border-gold/20 bg-forest-400/95 backdrop-blur-md space-y-3 z-20 pb-[max(1.25rem,env(safe-area-inset-bottom,1.25rem))]">
                 <div className="flex justify-between items-center">
-                  <span className="text-cream/60 text-sm">Subtotal</span>
-                  <span className="font-serif text-xl font-bold text-gold">
+                  <span className="text-cream/60 text-xs sm:text-sm font-medium">Subtotal ({items.reduce((s, i) => s + i.quantity, 0)} items)</span>
+                  <span className="font-serif text-xl sm:text-2xl font-bold text-gold">
                     Rs. {total.toLocaleString()}
                   </span>
                 </div>
-                <p className="text-cream/40 text-xs">Cash on Delivery available nationwide.</p>
-                <div className="flex gap-2">
+                <div className="flex gap-2.5">
                   <button
                     onClick={handleClose}
-                    className="w-1/3 min-h-[50px] border border-gold/30 hover:border-gold/60 text-cream/80 hover:text-cream font-semibold py-3 rounded-xl transition-all text-sm"
+                    className="w-1/3 min-h-[48px] border border-gold/30 hover:border-gold/60 text-cream/80 hover:text-cream font-semibold py-3 rounded-xl transition-all text-xs sm:text-sm cursor-pointer"
                   >
-                    Cancel
+                    Close
                   </button>
                   <button
                     onClick={() => setCheckout(true)}
-                    className="w-2/3 min-h-[50px] btn-gold-prominent font-extrabold py-3.5 rounded-xl shadow-xl flex items-center justify-center gap-2 text-sm sm:text-base cursor-pointer"
+                    className="w-2/3 min-h-[48px] bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-300 hover:via-yellow-300 hover:to-amber-400 text-stone-950 font-black text-sm sm:text-base py-3 px-4 rounded-xl shadow-lg shadow-amber-500/40 border border-yellow-200/80 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    Proceed to Checkout →
+                    <span>Proceed to Checkout →</span>
                   </button>
                 </div>
               </div>
