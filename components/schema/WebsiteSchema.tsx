@@ -1,25 +1,40 @@
 "use client";
 
 export default function WebsiteSchema() {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "https://junglegold-pk-three.vercel.app");
+
   const schema = [
-    // ── WebSite with SearchAction (enables Google Sitelinks search box) ──
+    // ── WebSite with Google Site Name & SearchAction ──
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "@id": "https://junglegold.pk/#website",
-      "url": "https://junglegold.pk",
-      "name": "Jungle Gold — Pure Raw Honey Pakistan",
+      "@id": `${baseUrl}/#website`,
+      "url": baseUrl,
+      "name": "Jungle Gold",
+      "alternateName": [
+        "Jungle Gold Pakistan",
+        "JungleGold",
+        "JungleGold.pk",
+        "جنگل گولڈ",
+        "Jungle Gold Raw Honey"
+      ],
       "description":
-        "Buy 100% pure raw jungle honey and organic Sidr honey online in Pakistan with Cash on Delivery. Harvested from Swat, Karak & Attock. PCSIR lab certified.",
+        "100% pure raw jungle honey and organic Sidr honey online in Pakistan with nationwide Cash on Delivery. PCSIR lab certified.",
       "inLanguage": "en-PK",
       "publisher": {
-        "@id": "https://junglegold.pk/#organization",
+        "@id": `${baseUrl}/#organization`,
       },
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "https://junglegold.pk/#products?q={search_term_string}",
+          "urlTemplate": `${baseUrl}/#products?q={search_term_string}`,
         },
         "query-input": "required name=search_term_string",
       },
@@ -34,31 +49,31 @@ export default function WebsiteSchema() {
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "https://junglegold.pk",
+          "item": baseUrl,
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "Products",
-          "item": "https://junglegold.pk/#products",
+          "item": `${baseUrl}/#products`,
         },
         {
           "@type": "ListItem",
           "position": 3,
-          "name": "Our Story",
-          "item": "https://junglegold.pk/#story",
+          "name": "About Us",
+          "item": `${baseUrl}/about`,
         },
         {
           "@type": "ListItem",
           "position": 4,
           "name": "Our Legacy",
-          "item": "https://junglegold.pk/legacy",
+          "item": `${baseUrl}/legacy`,
         },
         {
           "@type": "ListItem",
           "position": 5,
-          "name": "About Us",
-          "item": "https://junglegold.pk/about",
+          "name": "Our Team",
+          "item": `${baseUrl}/team`,
         },
       ],
     },
@@ -67,11 +82,11 @@ export default function WebsiteSchema() {
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      "@id": "https://junglegold.pk/#webpage",
-      "url": "https://junglegold.pk",
-      "name": "Jungle Gold — 100% Pure Raw Jungle Honey Pakistan",
-      "isPartOf": { "@id": "https://junglegold.pk/#website" },
-      "about": { "@id": "https://junglegold.pk/#organization" },
+      "@id": `${baseUrl}/#webpage`,
+      "url": baseUrl,
+      "name": "Jungle Gold — 100% Pure Raw Honey in Pakistan",
+      "isPartOf": { "@id": `${baseUrl}/#website` },
+      "about": { "@id": `${baseUrl}/#organization` },
       "speakable": {
         "@type": "SpeakableSpecification",
         "cssSelector": ["h1", "h2", ".speakable"],

@@ -113,6 +113,17 @@ export const metadata: Metadata = {
   verification: {
     google: "google0ccaa1cfd930e732",
   },
+  icons: {
+    icon: [
+      { url: "/brand-logo.png", type: "image/png", sizes: "512x512" },
+      { url: "/brand-logo.png", type: "image/png", sizes: "192x192" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/brand-logo.png", sizes: "180x180", type: "image/png" },
+    ],
+    shortcut: "/brand-logo.png",
+  },
   category: "food",
   classification: "Organic Food > Honey",
   other: {
@@ -135,6 +146,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-PK" className={`${playfair.variable} ${inter.variable}`}>
       <head>
+        {/* Favicon & Google Search Result Brand Logo */}
+        <link rel="icon" type="image/png" sizes="512x512" href="/brand-logo.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/brand-logo.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/brand-logo.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/brand-logo.png" />
+        <link rel="shortcut icon" href="/brand-logo.png" />
+
         {/* Geo tags */}
         <meta name="geo.region" content="PK" />
         <meta name="geo.placename" content="Pakistan" />
