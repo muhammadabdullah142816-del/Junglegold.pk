@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import ProductGrid from "@/components/ProductGrid";
 import AuthenticityBlock from "@/components/AuthenticityBlock";
+import HoneyInPakistanGuide from "@/components/HoneyInPakistanGuide";
 import LegacySection from "@/components/LegacySection";
 import SocialProof from "@/components/SocialProof";
 import Footer from "@/components/Footer";
@@ -16,6 +17,8 @@ export default function Home() {
         <ProductGrid />
         <div className="gold-divider" />
         <AuthenticityBlock />
+        <div className="gold-divider" />
+        <HoneyInPakistanGuide />
         <div className="gold-divider" />
         <LegacySection />
         <div className="gold-divider" />
