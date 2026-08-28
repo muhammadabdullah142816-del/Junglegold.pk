@@ -25,7 +25,7 @@ export async function GET() {
         "Harvested from untouched high-altitude forest blossoms in Margalla Hills & Skardu. Rich in live bee pollen and natural active enzymes.",
       images: ["/products.jpg", "/hero-jar.jpg", "/harvest.jpg", "/crystallization.jpg"],
       variants: [
-        { id: "var-m100", size: "100g",  price: 350,  in_stock: true },
+        { id: "var-m125", size: "125g",  price: 350,  in_stock: true },
         { id: "var-m200", size: "250g",  price: 700,  in_stock: true },
         { id: "var-m500", size: "500g",  price: 1400, in_stock: true },
         { id: "var-m1kg", size: "1kg",   price: 2800, in_stock: true },

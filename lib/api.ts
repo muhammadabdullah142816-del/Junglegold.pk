@@ -37,9 +37,9 @@ export function getSupabaseConnectionStatus() {
 
 export const DEFAULT_PRODUCTS: Product[] = [
   {
-    id: "prod-multi-100g",
-    title: "Wild Forest Multi-Flower Honey — 100g",
-    description: "100% pure raw wild forest honey in compact 100g jar. Rich in live bee pollen and natural active enzymes from Margalla & Skardu blossoms.",
+    id: "prod-multi-125g",
+    title: "Wild Forest Multi-Flower Honey — 125g",
+    description: "100% pure raw wild forest honey in compact 125g jar. Rich in live bee pollen and natural active enzymes from Margalla & Skardu blossoms.",
     images: [
       "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787175084414-te5v48.jpg",
       "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787175096212-0gm1wj.jpg",
@@ -47,7 +47,7 @@ export const DEFAULT_PRODUCTS: Product[] = [
       "/products.jpg",
     ],
     variants: [
-      { id: "var-100g", size: "100g", price: 350, in_stock: true },
+      { id: "var-125g", size: "125g", price: 350, in_stock: true },
     ],
     created_at: "2026-08-18T17:04:15.577Z",
   },
@@ -335,7 +335,7 @@ export async function fetchOrders(): Promise<Order[]> {
 
 /**
  * Normalizes products returned from Supabase database to ensure:
- * 1. 4 distinct Multi-Flower Honey size cards are displayed (100g, 250g, 500g, 1kg) at Rs. 350, 700, 1400, 2800.
+ * 1. 4 distinct Multi-Flower Honey size cards are displayed (125g, 250g, 500g, 1kg) at Rs. 350, 700, 1400, 2800.
  * 2. Any Berry / Sidr cards are COMPLETELY removed as requested.
  * 3. 100% stable matching with DEFAULT_PRODUCTS so there is zero layout flicker.
  */
@@ -352,8 +352,8 @@ export function normalizeProducts(rawProducts: Product[]): Product[] {
 
   const sizeConfigs: Record<number, { title: string; size: string; defaultImgs: string[] }> = {
     350: {
-      title: "Wild Forest Multi-Flower Honey — 100g",
-      size: "100g",
+      title: "Wild Forest Multi-Flower Honey — 125g",
+      size: "125g",
       defaultImgs: DEFAULT_PRODUCTS[0].images,
     },
     700: {
@@ -409,7 +409,7 @@ export function normalizeProducts(rawProducts: Product[]): Product[] {
     }
   });
 
-  // Sort ascending by price: 350 (100g) -> 700 (250g) -> 1400 (500g) -> 2800 (1kg)
+  // Sort ascending by price: 350 (125g) -> 700 (250g) -> 1400 (500g) -> 2800 (1kg)
   normalized.sort((a, b) => (a.variants[0]?.price || 0) - (b.variants[0]?.price || 0));
 
   return normalized;

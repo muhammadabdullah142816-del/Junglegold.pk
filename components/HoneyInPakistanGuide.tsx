@@ -6,7 +6,7 @@ const HONEY_PRICES_2026 = [
   {
     variety: "🌸 Wild Forest Multi-Flower Honey",
     origin: "Margalla Hills & Skardu, KPK",
-    size100: "Rs. 350",
+    size125: "Rs. 350",
     size250: "Rs. 700",
     size500: "Rs. 1,400",
     size1kg: "Rs. 2,800",
@@ -138,7 +138,7 @@ export default function HoneyInPakistanGuide() {
                 <tr className="border-b border-gold/20 text-gold font-serif text-xs uppercase tracking-wider">
                   <th className="py-3 px-3">Honey Variety</th>
                   <th className="py-3 px-3">Origin</th>
-                  <th className="py-3 px-3 text-center">100g</th>
+                  <th className="py-3 px-3 text-center">125g</th>
                   <th className="py-3 px-3 text-center">250g</th>
                   <th className="py-3 px-3 text-center">500g</th>
                   <th className="py-3 px-3 text-center">1kg</th>
@@ -164,7 +164,7 @@ export default function HoneyInPakistanGuide() {
                       )}
                     </td>
                     <td className="py-4 px-3 text-gold/80 text-[11px] sm:text-xs">{item.origin}</td>
-                    <td className={`py-4 px-3 text-center font-bold whitespace-nowrap ${item.inStock ? "text-amber-400" : "text-cream/30"}`}>{item.size100}</td>
+                    <td className={`py-4 px-3 text-center font-bold whitespace-nowrap ${item.inStock ? "text-amber-400" : "text-cream/30"}`}>{item.size125}</td>
                     <td className={`py-4 px-3 text-center font-bold whitespace-nowrap ${item.inStock ? "text-amber-400" : "text-cream/30"}`}>{item.size250}</td>
                     <td className={`py-4 px-3 text-center font-bold whitespace-nowrap ${item.inStock ? "text-amber-400" : "text-cream/30"}`}>{item.size500}</td>
                     <td className={`py-4 px-3 text-center font-bold whitespace-nowrap ${item.inStock ? "text-amber-400" : "text-cream/30"}`}>{item.size1kg}</td>
