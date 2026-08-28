@@ -33,9 +33,21 @@ export function getSupabaseConnectionStatus() {
   };
 }
 
-// ─── Local Mock Fallbacks for Dev Testing ───────────────────────────────────
+// ─── Default Product Catalog & Fallbacks ────────────────────────────────────
 
-const MOCK_PRODUCTS: Product[] = [
+export const DEFAULT_PRODUCTS: Product[] = [
+  {
+    id: "prod-multi-02",
+    title: "Wild Forest Multi-Flower Honey",
+    description: "Harvested from untouched high-altitude forest blossoms in Margalla Hills & Skardu. Rich in live bee pollen and natural active enzymes.",
+    images: ["/products.jpg", "/hero-jar.jpg", "/harvest.jpg", "/crystallization.jpg"],
+    variants: [
+      { id: "var-m100", size: "125g", price: 1000, in_stock: true },
+      { id: "var-m200", size: "250g", price: 1800, in_stock: true },
+      { id: "var-m720", size: "500g", price: 3800, in_stock: true },
+    ],
+    created_at: new Date().toISOString(),
+  },
   {
     id: "prod-sidr-01",
     title: "Raw Wild Sidr (Beri) Honey",
@@ -48,19 +60,9 @@ const MOCK_PRODUCTS: Product[] = [
     ],
     created_at: new Date().toISOString(),
   },
-  {
-    id: "prod-multi-02",
-    title: "Wild Forest Multi-Flower Honey",
-    description: "Harvested from untouched high-altitude forest blossoms in Margalla Hills & Skardu. Rich in live bee pollen.",
-    images: ["/products.jpg", "/harvest.jpg", "/crystallization.jpg"],
-    variants: [
-      { id: "var-m100", size: "125g", price: 1000, in_stock: true },
-      { id: "var-m200", size: "250g", price: 1800, in_stock: true },
-      { id: "var-m720", size: "500g", price: 3800, in_stock: true },
-    ],
-    created_at: new Date().toISOString(),
-  },
 ];
+
+const MOCK_PRODUCTS: Product[] = DEFAULT_PRODUCTS;
 
 const MOCK_OPERATORS: Operator[] = [
   {

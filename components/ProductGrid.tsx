@@ -3,16 +3,24 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ShoppingCart, CheckCircle, XCircle, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { fetchProducts } from "@/lib/api";
+import { fetchProducts, DEFAULT_PRODUCTS } from "@/lib/api";
 import type { Product } from "@/types/database";
 
 import ProductSchema from "@/components/schema/ProductSchema";
 import ProductQuickViewModal from "@/components/ProductQuickViewModal";
 
 export default function ProductGrid() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [selectedVariant, setSelectedVariant] = useState<Record<string, number>>({});
-  const [selectedImage, setSelectedImage] = useState<Record<string, number>>({});
+  const [products, setProducts] = useState<Product[]>(DEFAULT_PRODUCTS);
+  const [selectedVariant, setSelectedVariant] = useState<Record<string, number>>(() => {
+    const init: Record<string, number> = {};
+    DEFAULT_PRODUCTS.forEach((p) => { init[p.id] = 0; });
+    return init;
+  });
+  const [selectedImage, setSelectedImage] = useState<Record<string, number>>(() => {
+    const init: Record<string, number> = {};
+    DEFAULT_PRODUCTS.forEach((p) => { init[p.id] = 0; });
+    return init;
+  });
   const [added, setAdded] = useState<string | null>(null);
   const [activeModalProduct, setActiveModalProduct] = useState<Product | null>(null);
   const { add, openDrawer } = useCart();
@@ -21,7 +29,9 @@ export default function ProductGrid() {
     async function loadProducts() {
       try {
         const data = await fetchProducts();
-        setProducts(data || []);
+        if (data && data.length > 0) {
+          setProducts(data);
+        }
       } catch (err) {
         console.error("Failed to load products:", err);
       }
@@ -29,7 +39,7 @@ export default function ProductGrid() {
     loadProducts();
   }, []);
 
-  // Initialize selected variants and images
+  // Update selected variants and images if new products arrive
   useEffect(() => {
     if (products.length > 0) {
       setSelectedVariant((prev) => {
