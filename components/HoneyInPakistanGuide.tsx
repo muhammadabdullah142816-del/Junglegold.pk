@@ -6,22 +6,26 @@ const HONEY_PRICES_2026 = [
   {
     variety: "🌸 Wild Forest Multi-Flower Honey",
     origin: "Margalla Hills & Skardu, KPK",
-    size125: "Rs. 1,000",
-    size250: "Rs. 1,800",
-    size500: "Rs. 3,800",
+    size100: "Rs. 350",
+    size250: "Rs. 700",
+    size500: "Rs. 1,400",
+    size1kg: "Rs. 2,800",
     tasteProfile: "Rich floral, golden amber, live bee pollen",
     purityTest: "PCSIR Certified · Cold-Extracted · Raw",
     badge: "BESTSELLER",
+    inStock: true,
   },
   {
     variety: "🍯 Raw Wild Sidr (Beri) Honey",
     origin: "Swat Valley & Karak, KPK",
-    size125: "Rs. 1,200",
-    size250: "Rs. 2,200",
-    size500: "Rs. 4,500",
+    size100: "—",
+    size250: "—",
+    size500: "—",
+    size1kg: "—",
     tasteProfile: "Dark caramel, thick, potent medicinal",
     purityTest: "PCSIR Certified · Unheated · Unfiltered",
-    badge: "PREMIUM",
+    badge: "OUT OF STOCK",
+    inStock: false,
   },
 ];
 
@@ -141,35 +145,47 @@ export default function HoneyInPakistanGuide() {
           </div>
 
           <div className="overflow-x-auto -mx-2 sm:mx-0">
-            <table className="w-full text-left text-xs sm:text-sm text-cream/80 border-collapse min-w-[480px]">
+            <table className="w-full text-left text-xs sm:text-sm text-cream/80 border-collapse min-w-[520px]">
               <thead>
                 <tr className="border-b border-gold/20 text-gold font-serif text-xs uppercase tracking-wider">
                   <th className="py-3 px-3">Honey Variety</th>
                   <th className="py-3 px-3">Origin</th>
-                  <th className="py-3 px-3 text-center">125g</th>
+                  <th className="py-3 px-3 text-center">100g</th>
                   <th className="py-3 px-3 text-center">250g</th>
                   <th className="py-3 px-3 text-center">500g</th>
+                  <th className="py-3 px-3 text-center">1kg</th>
                   <th className="py-3 px-3">Certification</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 font-sans">
                 {HONEY_PRICES_2026.map((item) => (
-                  <tr key={item.variety} className="hover:bg-gold/5 transition-colors">
+                  <tr key={item.variety} className={`transition-colors ${item.inStock ? "hover:bg-gold/5" : "opacity-60"}`}>
                     <td className="py-4 px-3">
-                      <div className="font-semibold text-cream leading-snug">{item.variety}</div>
-                      <div className="text-[11px] text-cream/50 mt-0.5">{item.tasteProfile}</div>
+                      <div className={`font-semibold leading-snug ${item.inStock ? "text-cream" : "text-cream/50 line-through"}`}>{item.variety}</div>
+                      <div className="text-[11px] text-cream/50 mt-0.5 no-underline" style={{textDecoration:"none"}}>{item.tasteProfile}</div>
                       {item.badge && (
-                        <span className={`inline-block mt-1.5 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${item.badge === "BESTSELLER" ? "bg-amber-400/15 text-amber-300 border-amber-400/40" : "bg-purple-400/15 text-purple-300 border-purple-400/40"}`}>
+                        <span className={`inline-block mt-1.5 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${
+                          item.badge === "BESTSELLER"
+                            ? "bg-amber-400/15 text-amber-300 border-amber-400/40"
+                            : item.badge === "OUT OF STOCK"
+                            ? "bg-red-900/40 text-red-400 border-red-700/40"
+                            : "bg-purple-400/15 text-purple-300 border-purple-400/40"
+                        }`}>
                           {item.badge}
                         </span>
                       )}
                     </td>
                     <td className="py-4 px-3 text-gold/80 text-[11px] sm:text-xs">{item.origin}</td>
-                    <td className="py-4 px-3 text-center font-bold text-amber-400 whitespace-nowrap">{item.size125}</td>
-                    <td className="py-4 px-3 text-center font-bold text-amber-400 whitespace-nowrap">{item.size250}</td>
-                    <td className="py-4 px-3 text-center font-bold text-amber-400 whitespace-nowrap">{item.size500}</td>
+                    <td className={`py-4 px-3 text-center font-bold whitespace-nowrap ${item.inStock ? "text-amber-400" : "text-cream/30"}`}>{item.size100}</td>
+                    <td className={`py-4 px-3 text-center font-bold whitespace-nowrap ${item.inStock ? "text-amber-400" : "text-cream/30"}`}>{item.size250}</td>
+                    <td className={`py-4 px-3 text-center font-bold whitespace-nowrap ${item.inStock ? "text-amber-400" : "text-cream/30"}`}>{item.size500}</td>
+                    <td className={`py-4 px-3 text-center font-bold whitespace-nowrap ${item.inStock ? "text-amber-400" : "text-cream/30"}`}>{item.size1kg}</td>
                     <td className="py-4 px-3">
-                      <span className="inline-flex items-center gap-1 text-[11px] text-green-400 font-medium bg-green-950/40 px-2 py-0.5 rounded-full border border-green-800/40 whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full border whitespace-nowrap ${
+                        item.inStock
+                          ? "text-green-400 bg-green-950/40 border-green-800/40"
+                          : "text-red-400 bg-red-950/40 border-red-800/40"
+                      }`}>
                         <CheckCircle2 size={11} /> {item.purityTest}
                       </span>
                     </td>
