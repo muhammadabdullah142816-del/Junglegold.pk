@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import type { Order, Product, CreateOrderPayload, Operator, LegacyMilestone } from "@/types/database";
+import type { Order, Product, ProductVariant, CreateOrderPayload, Operator, LegacyMilestone } from "@/types/database";
 
 // ─── Security Helpers ────────────────────────────────────────────────────────
 
@@ -298,6 +298,129 @@ export async function fetchOrders(): Promise<Order[]> {
   );
 }
 
+/**
+ * Normalizes products returned from Supabase database to ensure:
+ * 1. Multi-Flower honey is ALWAYS card #1 with 4 selectable sizes (100g, 250g, 500g, 1kg) at Rs. 350, 700, 1400, 2800.
+ * 2. Raw Wild Sidr (Beri) Honey is ALWAYS card #2 marked Out of Stock.
+ * 3. Any separate single-size products created in Supabase are cleanly consolidated into the multi-variant card.
+ * 4. Zero layout shift between initial server/static render and client DB fetch.
+ */
+export function normalizeProducts(rawProducts: Product[]): Product[] {
+  if (!rawProducts || rawProducts.length === 0) return DEFAULT_PRODUCTS;
+
+  const multiItems = rawProducts.filter((p) => {
+    const t = (p.title || "").toLowerCase();
+    return t.includes("multi") || t.includes("flower") || t.includes("wild forest");
+  });
+
+  const sidrItems = rawProducts.filter((p) => {
+    const t = (p.title || "").toLowerCase();
+    return t.includes("sidr") || t.includes("beri");
+  });
+
+  // Consolidate Multi-Flower
+  let finalMulti: Product;
+  if (multiItems.length > 0) {
+    const allVariants: ProductVariant[] = [];
+    const allImages: string[] = [];
+
+    // Gather images from all items
+    multiItems.forEach((item) => {
+      if (Array.isArray(item.images)) {
+        item.images.forEach((img) => {
+          if (img && !allImages.includes(img)) allImages.push(img);
+        });
+      }
+      if (Array.isArray(item.variants)) {
+        item.variants.forEach((v) => {
+          let cleanSize = v.size;
+          if (v.price === 350) cleanSize = "100g";
+          else if (v.price === 700) cleanSize = "250g";
+          else if (v.price === 1400) cleanSize = "500g";
+          else if (v.price === 2800) cleanSize = "1kg";
+
+          if (!allVariants.some((existing) => existing.size === cleanSize || existing.price === v.price)) {
+            allVariants.push({
+              id: v.id || `var-${cleanSize}`,
+              size: cleanSize,
+              price: v.price,
+              in_stock: v.in_stock ?? true,
+            });
+          }
+        });
+      }
+    });
+
+    // Ensure all 4 standard sizes are present
+    const standardSizes = [
+      { size: "100g", price: 350 },
+      { size: "250g", price: 700 },
+      { size: "500g", price: 1400 },
+      { size: "1kg", price: 2800 },
+    ];
+    standardSizes.forEach((std) => {
+      if (!allVariants.some((v) => v.size === std.size || v.price === std.price)) {
+        allVariants.push({
+          id: `var-${std.size}`,
+          size: std.size,
+          price: std.price,
+          in_stock: true,
+        });
+      }
+    });
+
+    allVariants.sort((a, b) => a.price - b.price);
+
+    const fallbackImgs = ["/products.jpg", "/hero-jar.jpg", "/harvest.jpg", "/crystallization.jpg"];
+    fallbackImgs.forEach((img) => {
+      if (!allImages.includes(img)) allImages.push(img);
+    });
+
+    finalMulti = {
+      id: "prod-multi-02",
+      title: "Wild Forest Multi-Flower Honey",
+      description:
+        multiItems[0]?.description || DEFAULT_PRODUCTS[0].description,
+      images: allImages.length > 0 ? allImages : DEFAULT_PRODUCTS[0].images,
+      variants: allVariants,
+      created_at: multiItems[0]?.created_at || new Date().toISOString(),
+    };
+  } else {
+    finalMulti = DEFAULT_PRODUCTS[0];
+  }
+
+  // Consolidate Sidr (Mark Out of Stock)
+  let finalSidr: Product;
+  if (sidrItems.length > 0) {
+    finalSidr = {
+      ...sidrItems[0],
+      id: "prod-sidr-01",
+      title: "Raw Wild Sidr (Beri) Honey",
+      images: sidrItems[0].images?.length > 0 ? sidrItems[0].images : DEFAULT_PRODUCTS[1].images,
+      variants: (sidrItems[0].variants?.length > 0 ? sidrItems[0].variants : DEFAULT_PRODUCTS[1].variants).map((v) => ({
+        ...v,
+        in_stock: false, // Mark Out of Stock
+      })),
+    };
+  } else {
+    finalSidr = DEFAULT_PRODUCTS[1];
+  }
+
+  // Custom other products
+  const otherItems = rawProducts.filter((p) => {
+    const t = (p.title || "").toLowerCase();
+    return (
+      !t.includes("multi") &&
+      !t.includes("flower") &&
+      !t.includes("wild forest") &&
+      !t.includes("sidr") &&
+      !t.includes("beri")
+    );
+  });
+
+  return [finalMulti, finalSidr, ...otherItems];
+}
+
 export async function fetchProducts(): Promise<Product[]> {
   if (isPlaceholderConfig()) {
     return DEFAULT_PRODUCTS;
@@ -309,18 +432,8 @@ export async function fetchProducts(): Promise<Product[]> {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error || !data || data.length === 0) return null;
-
-      // Always enforce correct display order:
-      // Multi-Flower (#1) then Sidr (#2). Any extra DB products appended after.
-      const PRIORITY_ORDER = ["prod-multi-02", "prod-sidr-01"];
-      const sorted = [
-        ...PRIORITY_ORDER
-          .map((id) => (data as Product[]).find((p) => p.id === id))
-          .filter(Boolean) as Product[],
-        ...(data as Product[]).filter((p) => !PRIORITY_ORDER.includes(p.id)),
-      ];
-      return sorted.length > 0 ? sorted : null;
+      if (error || !data || data.length === 0) return DEFAULT_PRODUCTS;
+      return normalizeProducts(data as Product[]);
     },
     2500,
     DEFAULT_PRODUCTS
