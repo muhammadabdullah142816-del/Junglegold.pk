@@ -300,7 +300,7 @@ export async function fetchOrders(): Promise<Order[]> {
 
 export async function fetchProducts(): Promise<Product[]> {
   if (isPlaceholderConfig()) {
-    return localProductsStore;
+    return DEFAULT_PRODUCTS;
   }
   return withTimeout(
     async () => {
@@ -310,10 +310,20 @@ export async function fetchProducts(): Promise<Product[]> {
         .order("created_at", { ascending: false });
 
       if (error || !data || data.length === 0) return null;
-      return data as Product[];
+
+      // Always enforce correct display order:
+      // Multi-Flower (#1) then Sidr (#2). Any extra DB products appended after.
+      const PRIORITY_ORDER = ["prod-multi-02", "prod-sidr-01"];
+      const sorted = [
+        ...PRIORITY_ORDER
+          .map((id) => (data as Product[]).find((p) => p.id === id))
+          .filter(Boolean) as Product[],
+        ...(data as Product[]).filter((p) => !PRIORITY_ORDER.includes(p.id)),
+      ];
+      return sorted.length > 0 ? sorted : null;
     },
     2500,
-    localProductsStore
+    DEFAULT_PRODUCTS
   );
 }
 
