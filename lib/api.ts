@@ -33,33 +33,68 @@ export function getSupabaseConnectionStatus() {
   };
 }
 
-// ─── Default Product Catalog & Fallbacks ────────────────────────────────────
+// ─── Default Product Catalog (4 Multi-Flower Size Cards) ────────────────────
 
 export const DEFAULT_PRODUCTS: Product[] = [
   {
-    id: "prod-multi-02",
-    title: "Wild Forest Multi-Flower Honey",
-    description: "Harvested from untouched high-altitude forest blossoms in Margalla Hills & Skardu. Rich in live bee pollen and natural active enzymes.",
-    images: ["/products.jpg", "/hero-jar.jpg", "/harvest.jpg", "/crystallization.jpg"],
-    variants: [
-      { id: "var-m100", size: "100g",  price: 350,  in_stock: true },
-      { id: "var-m200", size: "250g",  price: 700,  in_stock: true },
-      { id: "var-m500", size: "500g",  price: 1400, in_stock: true },
-      { id: "var-m1kg", size: "1kg",   price: 2800, in_stock: true },
+    id: "prod-multi-100g",
+    title: "Wild Forest Multi-Flower Honey — 100g",
+    description: "100% pure raw wild forest honey in compact 100g jar. Rich in live bee pollen and natural active enzymes from Margalla & Skardu blossoms.",
+    images: [
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787175084414-te5v48.jpg",
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787175096212-0gm1wj.jpg",
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787175125769-jfukvs.jpg",
+      "/products.jpg",
     ],
-    created_at: new Date().toISOString(),
+    variants: [
+      { id: "var-100g", size: "100g", price: 350, in_stock: true },
+    ],
+    created_at: "2026-08-18T17:04:15.577Z",
   },
   {
-    id: "prod-sidr-01",
-    title: "Raw Wild Sidr (Beri) Honey",
-    description: "100% pure, unheated, unfiltered raw wild Sidr honey harvested from wild berries in Swat Valley & Karak.",
-    images: ["/hero-jar.jpg", "/products.jpg", "/harvest.jpg"],
-    variants: [
-      { id: "var-100", size: "125g", price: 1200, in_stock: false },
-      { id: "var-200", size: "250g", price: 2200, in_stock: false },
-      { id: "var-720", size: "500g", price: 4500, in_stock: false },
+    id: "prod-multi-250g",
+    title: "Wild Forest Multi-Flower Honey — 250g",
+    description: "100% pure raw wild forest honey in classic 250g jar. Cold-extracted, unfiltered organic sweetness for daily wellness and immunity.",
+    images: [
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787177451524-njyy1h.jpg",
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787177495450-xhe9za.jpg",
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787177511056-00xbsh.jpg",
+      "/products.jpg",
     ],
-    created_at: new Date().toISOString(),
+    variants: [
+      { id: "var-250g", size: "250g", price: 700, in_stock: true },
+    ],
+    created_at: "2026-08-19T22:12:05.066Z",
+  },
+  {
+    id: "prod-multi-500g",
+    title: "Wild Forest Multi-Flower Honey — 500g",
+    description: "100% pure raw wild forest honey in family 500g jar. Unpasteurized and packed with authentic floral aroma and active antioxidants.",
+    images: [
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787206276027-xml245.jpg",
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787206301359-ldibuu.jpg",
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787206343781-g1fkj.jpg",
+      "/products.jpg",
+    ],
+    variants: [
+      { id: "var-500g", size: "500g", price: 1400, in_stock: true },
+    ],
+    created_at: "2026-08-20T06:13:04.045Z",
+  },
+  {
+    id: "prod-multi-1kg",
+    title: "Wild Forest Multi-Flower Honey — 1kg",
+    description: "100% pure raw wild forest honey in premium 1kg bulk jar (Best Value). Untreated, unheated honey harvested straight from wild hives.",
+    images: [
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787207453493-aunrlq.jpg",
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787207475938-err98.jpg",
+      "https://jaqvvehsroxfvdavqdvy.supabase.co/storage/v1/object/public/product-images/product-1787207489705-wgjyva.jpg",
+      "/products.jpg",
+    ],
+    variants: [
+      { id: "var-1kg", size: "1kg", price: 2800, in_stock: true },
+    ],
+    created_at: "2026-08-20T06:33:38.512Z",
   },
 ];
 
@@ -300,125 +335,84 @@ export async function fetchOrders(): Promise<Order[]> {
 
 /**
  * Normalizes products returned from Supabase database to ensure:
- * 1. Multi-Flower honey is ALWAYS card #1 with 4 selectable sizes (100g, 250g, 500g, 1kg) at Rs. 350, 700, 1400, 2800.
- * 2. Raw Wild Sidr (Beri) Honey is ALWAYS card #2 marked Out of Stock.
- * 3. Any separate single-size products created in Supabase are cleanly consolidated into the multi-variant card.
- * 4. Zero layout shift between initial server/static render and client DB fetch.
+ * 1. 4 distinct Multi-Flower Honey size cards are displayed (100g, 250g, 500g, 1kg) at Rs. 350, 700, 1400, 2800.
+ * 2. Any Berry / Sidr cards are COMPLETELY removed as requested.
+ * 3. 100% stable matching with DEFAULT_PRODUCTS so there is zero layout flicker.
  */
 export function normalizeProducts(rawProducts: Product[]): Product[] {
   if (!rawProducts || rawProducts.length === 0) return DEFAULT_PRODUCTS;
 
-  const multiItems = rawProducts.filter((p) => {
+  // Filter out any berry / sidr products completely
+  const nonBerry = rawProducts.filter((p) => {
     const t = (p.title || "").toLowerCase();
-    return t.includes("multi") || t.includes("flower") || t.includes("wild forest");
+    return !t.includes("sidr") && !t.includes("beri");
   });
 
-  const sidrItems = rawProducts.filter((p) => {
-    const t = (p.title || "").toLowerCase();
-    return t.includes("sidr") || t.includes("beri");
+  if (nonBerry.length === 0) return DEFAULT_PRODUCTS;
+
+  const sizeConfigs: Record<number, { title: string; size: string; defaultImgs: string[] }> = {
+    350: {
+      title: "Wild Forest Multi-Flower Honey — 100g",
+      size: "100g",
+      defaultImgs: DEFAULT_PRODUCTS[0].images,
+    },
+    700: {
+      title: "Wild Forest Multi-Flower Honey — 250g",
+      size: "250g",
+      defaultImgs: DEFAULT_PRODUCTS[1].images,
+    },
+    1400: {
+      title: "Wild Forest Multi-Flower Honey — 500g",
+      size: "500g",
+      defaultImgs: DEFAULT_PRODUCTS[2].images,
+    },
+    2800: {
+      title: "Wild Forest Multi-Flower Honey — 1kg",
+      size: "1kg",
+      defaultImgs: DEFAULT_PRODUCTS[3].images,
+    },
+  };
+
+  const normalized: Product[] = [];
+  const handledPrices = new Set<number>();
+
+  nonBerry.forEach((p) => {
+    const v = p.variants?.[0] || { size: "250g", price: 700, in_stock: true };
+    const price = v.price || 700;
+    const config = sizeConfigs[price];
+
+    if (config) {
+      handledPrices.add(price);
+      normalized.push({
+        id: p.id,
+        title: config.title,
+        description: p.description || DEFAULT_PRODUCTS.find((d) => d.variants[0].price === price)?.description || "",
+        images: p.images && p.images.length > 0 ? p.images : config.defaultImgs,
+        variants: [
+          {
+            id: v.id || `var-${config.size}`,
+            size: config.size,
+            price: price,
+            in_stock: v.in_stock ?? true,
+          },
+        ],
+        created_at: p.created_at || new Date().toISOString(),
+      });
+    }
   });
 
-  // Consolidate Multi-Flower
-  let finalMulti: Product;
-  if (multiItems.length > 0) {
-    const allVariants: ProductVariant[] = [];
-    const allImages: string[] = [];
-
-    // Gather images from all items
-    multiItems.forEach((item) => {
-      if (Array.isArray(item.images)) {
-        item.images.forEach((img) => {
-          if (img && !allImages.includes(img)) allImages.push(img);
-        });
-      }
-      if (Array.isArray(item.variants)) {
-        item.variants.forEach((v) => {
-          let cleanSize = v.size;
-          if (v.price === 350) cleanSize = "100g";
-          else if (v.price === 700) cleanSize = "250g";
-          else if (v.price === 1400) cleanSize = "500g";
-          else if (v.price === 2800) cleanSize = "1kg";
-
-          if (!allVariants.some((existing) => existing.size === cleanSize || existing.price === v.price)) {
-            allVariants.push({
-              id: v.id || `var-${cleanSize}`,
-              size: cleanSize,
-              price: v.price,
-              in_stock: v.in_stock ?? true,
-            });
-          }
-        });
-      }
-    });
-
-    // Ensure all 4 standard sizes are present
-    const standardSizes = [
-      { size: "100g", price: 350 },
-      { size: "250g", price: 700 },
-      { size: "500g", price: 1400 },
-      { size: "1kg", price: 2800 },
-    ];
-    standardSizes.forEach((std) => {
-      if (!allVariants.some((v) => v.size === std.size || v.price === std.price)) {
-        allVariants.push({
-          id: `var-${std.size}`,
-          size: std.size,
-          price: std.price,
-          in_stock: true,
-        });
-      }
-    });
-
-    allVariants.sort((a, b) => a.price - b.price);
-
-    const fallbackImgs = ["/products.jpg", "/hero-jar.jpg", "/harvest.jpg", "/crystallization.jpg"];
-    fallbackImgs.forEach((img) => {
-      if (!allImages.includes(img)) allImages.push(img);
-    });
-
-    finalMulti = {
-      id: "prod-multi-02",
-      title: "Wild Forest Multi-Flower Honey",
-      description:
-        multiItems[0]?.description || DEFAULT_PRODUCTS[0].description,
-      images: allImages.length > 0 ? allImages : DEFAULT_PRODUCTS[0].images,
-      variants: allVariants,
-      created_at: multiItems[0]?.created_at || new Date().toISOString(),
-    };
-  } else {
-    finalMulti = DEFAULT_PRODUCTS[0];
-  }
-
-  // Consolidate Sidr (Mark Out of Stock)
-  let finalSidr: Product;
-  if (sidrItems.length > 0) {
-    finalSidr = {
-      ...sidrItems[0],
-      id: "prod-sidr-01",
-      title: "Raw Wild Sidr (Beri) Honey",
-      images: sidrItems[0].images?.length > 0 ? sidrItems[0].images : DEFAULT_PRODUCTS[1].images,
-      variants: (sidrItems[0].variants?.length > 0 ? sidrItems[0].variants : DEFAULT_PRODUCTS[1].variants).map((v) => ({
-        ...v,
-        in_stock: false, // Mark Out of Stock
-      })),
-    };
-  } else {
-    finalSidr = DEFAULT_PRODUCTS[1];
-  }
-
-  // Custom other products
-  const otherItems = rawProducts.filter((p) => {
-    const t = (p.title || "").toLowerCase();
-    return (
-      !t.includes("multi") &&
-      !t.includes("flower") &&
-      !t.includes("wild forest") &&
-      !t.includes("sidr") &&
-      !t.includes("beri")
-    );
+  // Ensure all 4 standard sizes exist
+  DEFAULT_PRODUCTS.forEach((def) => {
+    const defPrice = def.variants[0].price;
+    if (!handledPrices.has(defPrice)) {
+      normalized.push(def);
+    }
   });
 
-  return [finalMulti, finalSidr, ...otherItems];
+  // Sort ascending by price: 350 (100g) -> 700 (250g) -> 1400 (500g) -> 2800 (1kg)
+  normalized.sort((a, b) => (a.variants[0]?.price || 0) - (b.variants[0]?.price || 0));
+
+  return normalized;
 }
 
 export async function fetchProducts(): Promise<Product[]> {

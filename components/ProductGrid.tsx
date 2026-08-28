@@ -113,10 +113,10 @@ export default function ProductGrid() {
           <div className="gold-divider max-w-xs mx-auto" />
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product, i) => {
             const variantIdx = selectedVariant[product.id] || 0;
-            const variant = product.variants?.[variantIdx];
+            const variant = product.variants?.[variantIdx] || product.variants?.[0];
             const justAdded = added === (product.id + (variant?.size || ""));
             const images = product.images?.length > 0 ? product.images : ["/products.jpg"];
             const imgIdx = selectedImage[product.id] || 0;
@@ -127,15 +127,15 @@ export default function ProductGrid() {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.15 }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
                 onClick={() => setActiveModalProduct(product)}
                 className="glass-card rounded-2xl overflow-hidden product-card-hover group flex flex-col cursor-pointer border border-gold/20 hover:border-gold/60"
               >
                 {/* Image Gallery */}
-                <div className="relative h-64 overflow-hidden bg-black/20 group">
+                <div className="relative h-60 overflow-hidden bg-black/20 group">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={images[imgIdx]}
+                    src={images[imgIdx] || "/products.jpg"}
                     alt={product.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => {
@@ -158,17 +158,17 @@ export default function ProductGrid() {
                     <>
                       <button
                         onClick={(e) => prevImage(e, product.id, images.length)}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-gold text-white hover:text-forest rounded-full p-2 sm:opacity-0 sm:group-hover:opacity-100 transition-all z-10 min-w-[36px] min-h-[36px] flex items-center justify-center"
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-gold text-white hover:text-forest rounded-full p-1.5 sm:opacity-0 sm:group-hover:opacity-100 transition-all z-10 min-w-[32px] min-h-[32px] flex items-center justify-center"
                         aria-label="Previous product image"
                       >
-                        <ChevronLeft size={18} />
+                        <ChevronLeft size={16} />
                       </button>
                       <button
                         onClick={(e) => nextImage(e, product.id, images.length)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-gold text-white hover:text-forest rounded-full p-2 sm:opacity-0 sm:group-hover:opacity-100 transition-all z-10 min-w-[36px] min-h-[36px] flex items-center justify-center"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-gold text-white hover:text-forest rounded-full p-1.5 sm:opacity-0 sm:group-hover:opacity-100 transition-all z-10 min-w-[32px] min-h-[32px] flex items-center justify-center"
                         aria-label="Next product image"
                       >
-                        <ChevronRight size={18} />
+                        <ChevronRight size={16} />
                       </button>
                       <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-10">
                         {images.map((_, dotIdx) => (
@@ -187,23 +187,23 @@ export default function ProductGrid() {
                 </div>
 
                 {/* Body */}
-                <div className="p-6 flex flex-col flex-1 gap-4">
+                <div className="p-5 flex flex-col flex-1 gap-3">
                   <div>
-                    <h3 className="font-serif text-2xl font-bold text-cream mb-2 group-hover:text-gold transition-colors">{product.title}</h3>
-                    <p className="text-cream/60 text-sm leading-relaxed line-clamp-2">{product.description}</p>
+                    <h3 className="font-serif text-xl font-bold text-cream mb-1.5 group-hover:text-gold transition-colors line-clamp-1">{product.title}</h3>
+                    <p className="text-cream/60 text-xs leading-relaxed line-clamp-2">{product.description}</p>
                   </div>
 
-                  {/* Size selector */}
-                  {product.variants && product.variants.length > 0 && (
+                  {/* Size display / selector */}
+                  {product.variants && product.variants.length > 1 ? (
                     <div onClick={(e) => e.stopPropagation()}>
-                      <p className="text-cream/40 text-xs uppercase tracking-wider mb-2">Select Size</p>
-                      <div className="flex flex-wrap gap-2">
+                      <p className="text-cream/40 text-[10px] uppercase tracking-wider mb-1.5">Select Size</p>
+                      <div className="flex flex-wrap gap-1.5">
                         {product.variants.map((v, idx) => (
                           <button
                             key={v.id}
                             onClick={() => setSelectedVariant((s) => ({ ...s, [product.id]: idx }))}
                             disabled={!v.in_stock}
-                            className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all duration-200
+                            className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-all duration-200
                               ${idx === variantIdx
                                 ? "bg-gold text-forest border-gold font-bold shadow-gold-glow"
                                 : v.in_stock
@@ -216,20 +216,26 @@ export default function ProductGrid() {
                         ))}
                       </div>
                     </div>
-                  )}
+                  ) : variant ? (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/25">
+                        Jar Size: {variant.size}
+                      </span>
+                    </div>
+                  ) : null}
 
                   {/* Price + CTA */}
-                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-white/5">
+                  <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
                     <div>
-                      <span className="text-gold font-serif text-2xl font-bold">
+                      <span className="text-gold font-serif text-xl font-bold">
                         Rs. {variant ? variant.price.toLocaleString() : "---"}
                       </span>
-                      <span className="text-cream/30 text-xs ml-1">/ {variant ? variant.size : ""}</span>
+                      <span className="text-cream/30 text-[11px] ml-1">/ {variant ? variant.size : ""}</span>
                     </div>
                     <button
                       onClick={(e) => handleAdd(e, product.id)}
                       disabled={!variant || !variant.in_stock}
-                      className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-black transition-all duration-300 cursor-pointer shadow-lg
+                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black transition-all duration-300 cursor-pointer shadow-md
                         ${(variant && variant.in_stock)
                           ? justAdded
                             ? "bg-green-600 text-white scale-95"
@@ -237,7 +243,7 @@ export default function ProductGrid() {
                           : "bg-white/5 text-cream/20 cursor-not-allowed"
                         }`}
                     >
-                      {justAdded ? <><CheckCircle size={16} /> Added!</> : <><ShoppingCart size={16} /> Add to Cart</>}
+                      {justAdded ? <><CheckCircle size={14} /> Added!</> : <><ShoppingCart size={14} /> Add</>}
                     </button>
                   </div>
                 </div>

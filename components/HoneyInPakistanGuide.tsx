@@ -12,20 +12,8 @@ const HONEY_PRICES_2026 = [
     size1kg: "Rs. 2,800",
     tasteProfile: "Rich floral, golden amber, live bee pollen",
     purityTest: "PCSIR Certified · Cold-Extracted · Raw",
-    badge: "BESTSELLER",
+    badge: "IN STOCK · BESTSELLER",
     inStock: true,
-  },
-  {
-    variety: "🍯 Raw Wild Sidr (Beri) Honey",
-    origin: "Swat Valley & Karak, KPK",
-    size100: "—",
-    size250: "—",
-    size500: "—",
-    size1kg: "—",
-    tasteProfile: "Dark caramel, thick, potent medicinal",
-    purityTest: "PCSIR Certified · Unheated · Unfiltered",
-    badge: "OUT OF STOCK",
-    inStock: false,
   },
 ];
 
