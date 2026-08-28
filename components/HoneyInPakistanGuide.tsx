@@ -4,36 +4,24 @@ import { ShieldCheck, Truck, Award, CheckCircle2, HelpCircle } from "lucide-reac
 
 const HONEY_PRICES_2026 = [
   {
-    variety: "100% Pure Raw Wild Forest Honey",
-    origin: "Swat Valley, KPK",
-    size: "125g / 250g / 500g",
-    priceRange: "Rs. 1,000 – Rs. 3,800",
-    tasteProfile: "Rich, floral, golden amber",
-    purityTest: "PCSIR Certified / 0% Sugar",
+    variety: "🌸 Wild Forest Multi-Flower Honey",
+    origin: "Margalla Hills & Skardu, KPK",
+    size125: "Rs. 1,000",
+    size250: "Rs. 1,800",
+    size500: "Rs. 3,800",
+    tasteProfile: "Rich floral, golden amber, live bee pollen",
+    purityTest: "PCSIR Certified · Cold-Extracted · Raw",
+    badge: "BESTSELLER",
   },
   {
-    variety: "Original Sidr (Beri) Honey (Small Bee)",
-    origin: "Karak & Kohat, KPK",
-    size: "125g / 250g / 500g",
-    priceRange: "Rs. 1,200 – Rs. 4,500",
+    variety: "🍯 Raw Wild Sidr (Beri) Honey",
+    origin: "Swat Valley & Karak, KPK",
+    size125: "Rs. 1,200",
+    size250: "Rs. 2,200",
+    size500: "Rs. 4,500",
     tasteProfile: "Dark caramel, thick, potent medicinal",
-    purityTest: "PCSIR Certified / Unheated",
-  },
-  {
-    variety: "Kaghan Alpine Wildflower Honey",
-    origin: "Kaghan Valley, KPK",
-    size: "250g / 500g",
-    priceRange: "Rs. 1,800 – Rs. 3,500",
-    tasteProfile: "Light, herbal, crisp floral aroma",
-    purityTest: "PCSIR Certified / Cold-extracted",
-  },
-  {
-    variety: "Indus Riverine Acacia Honey",
-    origin: "Attock & Punjab Basin",
-    size: "250g / 500g",
-    priceRange: "Rs. 1,500 – Rs. 3,200",
-    tasteProfile: "Sweet, clear golden, slow crystallizing",
-    purityTest: "PCSIR Certified / Raw & Unfiltered",
+    purityTest: "PCSIR Certified · Unheated · Unfiltered",
+    badge: "PREMIUM",
   },
 ];
 
@@ -152,33 +140,52 @@ export default function HoneyInPakistanGuide() {
             </a>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs sm:text-sm text-cream/80 border-collapse">
+          <div className="overflow-x-auto -mx-2 sm:mx-0">
+            <table className="w-full text-left text-xs sm:text-sm text-cream/80 border-collapse min-w-[480px]">
               <thead>
-                <tr className="border-b border-gold/20 text-gold font-serif text-xs sm:text-sm uppercase tracking-wider">
+                <tr className="border-b border-gold/20 text-gold font-serif text-xs uppercase tracking-wider">
                   <th className="py-3 px-3">Honey Variety</th>
-                  <th className="py-3 px-3">Harvest Origin</th>
-                  <th className="py-3 px-3">Jar Sizes</th>
-                  <th className="py-3 px-3">Price (PKR)</th>
-                  <th className="py-3 px-3">Lab Verification</th>
+                  <th className="py-3 px-3">Origin</th>
+                  <th className="py-3 px-3 text-center">125g</th>
+                  <th className="py-3 px-3 text-center">250g</th>
+                  <th className="py-3 px-3 text-center">500g</th>
+                  <th className="py-3 px-3">Certification</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 font-sans">
                 {HONEY_PRICES_2026.map((item) => (
                   <tr key={item.variety} className="hover:bg-gold/5 transition-colors">
-                    <td className="py-3.5 px-3 font-semibold text-cream">{item.variety}</td>
-                    <td className="py-3.5 px-3 text-gold/80">{item.origin}</td>
-                    <td className="py-3.5 px-3 text-cream/70">{item.size}</td>
-                    <td className="py-3.5 px-3 font-bold text-amber-400">{item.priceRange}</td>
-                    <td className="py-3.5 px-3">
-                      <span className="inline-flex items-center gap-1 text-[11px] text-green-400 font-medium bg-green-950/40 px-2 py-0.5 rounded-full border border-green-800/40">
-                        <CheckCircle2 size={12} /> {item.purityTest}
+                    <td className="py-4 px-3">
+                      <div className="font-semibold text-cream leading-snug">{item.variety}</div>
+                      <div className="text-[11px] text-cream/50 mt-0.5">{item.tasteProfile}</div>
+                      {item.badge && (
+                        <span className={`inline-block mt-1.5 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border ${item.badge === "BESTSELLER" ? "bg-amber-400/15 text-amber-300 border-amber-400/40" : "bg-purple-400/15 text-purple-300 border-purple-400/40"}`}>
+                          {item.badge}
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-4 px-3 text-gold/80 text-[11px] sm:text-xs">{item.origin}</td>
+                    <td className="py-4 px-3 text-center font-bold text-amber-400 whitespace-nowrap">{item.size125}</td>
+                    <td className="py-4 px-3 text-center font-bold text-amber-400 whitespace-nowrap">{item.size250}</td>
+                    <td className="py-4 px-3 text-center font-bold text-amber-400 whitespace-nowrap">{item.size500}</td>
+                    <td className="py-4 px-3">
+                      <span className="inline-flex items-center gap-1 text-[11px] text-green-400 font-medium bg-green-950/40 px-2 py-0.5 rounded-full border border-green-800/40 whitespace-nowrap">
+                        <CheckCircle2 size={11} /> {item.purityTest}
                       </span>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* COD Note */}
+          <div className="mt-5 flex flex-wrap items-center gap-3 text-[11px] sm:text-xs text-cream/55">
+            <span className="flex items-center gap-1.5"><Truck size={13} className="text-gold" /> Free Cash on Delivery Nationwide</span>
+            <span className="text-gold/30">|</span>
+            <span className="flex items-center gap-1.5"><ShieldCheck size={13} className="text-gold" /> Rs. 50,000 Purity Guarantee</span>
+            <span className="text-gold/30">|</span>
+            <span>Prices include VAT · Last updated August 2026</span>
           </div>
         </motion.div>
 
